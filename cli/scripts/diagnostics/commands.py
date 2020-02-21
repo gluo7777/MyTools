@@ -1,15 +1,18 @@
 import click
 import os,platform,sys
+from cli.scripts.context import is_debug
 
 @click.group()
 @click.pass_context
 def info(context):
+    if is_debug():
+        click.echo("Running info command")
     pass
 
 @info.command()
 @click.pass_context
 def system(context):
-    if context.obj['VERBOSE']:
+    if is_debug():
         click.secho("Obtaining system diagnostics...", fg='green')
     path = os.path.abspath('.')
     ntpath = path

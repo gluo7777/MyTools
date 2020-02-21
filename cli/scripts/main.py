@@ -9,7 +9,7 @@ import cli.scripts.diagnostics.commands as diagnostics
 @click.pass_context
 def cli(context, verbose):
     if verbose:
-        click.echo("Running in verbose Mode")
+        click.echo("Running in Verbose Mode")
     try:
         context.ensure_object(dict)
         context.obj['VERBOSE'] = verbose
