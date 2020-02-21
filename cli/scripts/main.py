@@ -2,34 +2,21 @@ import click
 import os
 import sys
 import platform
+import cli.scripts.diagnostics.commands as diagnostics
 
 @click.group()
 @click.option('--verbose', is_flag=True, default=False, help="Log extravaneous output")
 @click.pass_context
-def root(context, verbose):
+def cli(context, verbose):
+    if verbose:
+        click.echo("Running in verbose Mode")
     try:
         context.ensure_object(dict)
+        context.obj['VERBOSE'] = verbose
+        return 0
     except Exception as e:
-        click.echo("Unable to initialize CLI context due to following error: \n%s" % e)
-    context.obj['VERBOSE'] = verbose
+        click.echo("Unable to initialize CLI context due to following error: %s" % e)
+        return 1
 
-@root.command('info')
-@click.pass_context
-def info(context):
-    if context.obj['VERBOSE']:
-        click.secho("Verbosity is enabled.", fg='green')
-    path = os.path.abspath('.')
-    ntpath = path
-    posixpath = path
-    # TODO: derive nt/posix path from the other
-    click.echo(
-        "Working Directory"
-        f"\nWindows Path: {ntpath}"
-        f"\nLinux Path: {posixpath}"
-    )
-    click.echo('Platform: %s' % os.name)
-    click.echo("Operating System:"
-        f"{platform.system()}.{platform.version()}"
-        f".{platform.release()}.{platform.node()}"
-        f".{platform.machine()}.{platform.processor()}")
-    click.echo('File System Encoding: %s' % sys.getdefaultencoding())
+cli.add_command(diagnostics.info)
+cli()

@@ -10,6 +10,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        mytool=cli.scripts.main:root
+        mytool=cli.scripts.main
     '''
 )
