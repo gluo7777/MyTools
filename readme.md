@@ -5,3 +5,5 @@
 3. Initialize virtualenv
     > virtualenv env
     > ./venv/Scripts/activate
+4. Create script executables
+    > pip install --editable .

@@ -1,6 +1,7 @@
 import click
 import os
 import sys
+import platform
 
 @click.group()
 @click.option('--verbose', is_flag=True, default=False, help="Log extravaneous output")
@@ -15,13 +16,20 @@ def root(context, verbose):
 @root.command('info')
 @click.pass_context
 def info(context):
-    if context['VERBOSE']:
+    if context.obj['VERBOSE']:
         click.secho("Verbosity is enabled.", fg='green')
-    click.echo("""Current Directory: %s\
-        \nCurrent Directory: %s\
-    """ % (
-        os.path.abspath('.'),
-        os.path.abspath('.')
-    ))
+    path = os.path.abspath('.')
+    ntpath = path
+    posixpath = path
+    # TODO: derive nt/posix path from the other
+    click.echo(
+        "Working Directory"
+        f"\nWindows Path: {ntpath}"
+        f"\nLinux Path: {posixpath}"
+    )
     click.echo('Platform: %s' % os.name)
+    click.echo("Operating System:"
+        f"{platform.system()}.{platform.version()}"
+        f".{platform.release()}.{platform.node()}"
+        f".{platform.machine()}.{platform.processor()}")
     click.echo('File System Encoding: %s' % sys.getdefaultencoding())
