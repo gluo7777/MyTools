@@ -1,11 +1,15 @@
 import click
 
 def is_debug():
-    return click.get_current_context().obj['VERBOSE'] or False
+    context = click.get_current_context(silent=True)
+    if context is None:
+        return False
+    return context.obj['VERBOSE'] or False
 
-def log(msg,error=False):
-    click.echo(msg,err=error)
+def log(msg,*args,**kwargs):
+    if click.get_current_context(silent=True) is not None:
+        click.echo(msg,args,kwargs)
 
-def debug(msg):
+def debug(msg,*args,**kwargs):
     if is_debug():
-        click.echo(msg)
+        log(msg, args, kwargs)

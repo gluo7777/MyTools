@@ -24,7 +24,7 @@ class Properties:
             context.log(f"Creating config file at {CONFIG_FILE}")
             try:
                 os.makedirs(CONFIG_DIR,exist_ok=True)
-                open(CONFIG_FILE, 'a').close()
+                open(CONFIG_FILE, 'w').close()
                 self.parser.read(CONFIG_FILE)
             except Exception as e:
                 context.log(f"Failed to create config file: {e}", error=True)
@@ -36,7 +36,7 @@ class Properties:
     def get(self, option, fallback=None):
         self.parser.get(self.section, option, fallback=fallback)
 
-    def set(self, option, value, persist=False):
+    def set(self, option, value, persist=True):
         self.parser.set(self.section,option,value)
         if persist:
             context.debug('Persisting property {self.section}.{option}={value}')
