@@ -32,6 +32,7 @@ class Properties:
 
         if not self.parser.has_section(self.section):
             self.parser.add_section(section)
+            self.persist()
     
     def get(self, option, fallback=None):
         self.parser.get(self.section, option, fallback=fallback)
@@ -40,11 +41,14 @@ class Properties:
         self.parser.set(self.section,option,value)
         if persist:
             context.debug('Persisting property {self.section}.{option}={value}')
-            try:
-                with open(CONFIG_FILE, mode='w') as fp:
-                    self.parser.write(fp)
-            except Exception as e:
-                context.log('Failed to persist properties: {e}', error=True)
+            self.persist()
     
     def has(self, option):
         return self.parser.has_option(self.section, option)
+
+    def persist(self):
+        try:
+            with open(CONFIG_FILE, mode='w') as fp:
+                self.parser.write(fp)
+        except Exception as e:
+            context.log('Failed to persist properties: {e}', error=True)

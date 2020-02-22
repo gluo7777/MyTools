@@ -2,6 +2,9 @@ import click
 import os,platform,sys
 from cli.scripts.context import is_debug
 import cli.scripts.context as global_context
+from cli.scripts.config import Properties
+
+props = Properties('Diagnostics')
 
 @click.group()
 @click.pass_context
