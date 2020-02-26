@@ -31,7 +31,7 @@ class Client():
                 'Accept': GitHubProperties.HEADER_ACCEPT
                 ,'Content-Type': GitHubProperties.HEADER_CONTENT_TYPE
             }
-            ,timeout=20
+            ,timeout=GitHubProperties.TIMEOUT
         )
         if response.status_code == 201:
             global_context.debug('Received 201 from /user/repos')

@@ -34,10 +34,10 @@ class Properties:
             self.parser.add_section(section)
             self.persist()
     
-    def get(self, option, fallback=None):
-        self.parser.get(self.section, option, fallback=fallback)
+    def get(self, option:str, fallback=None) -> str:
+        return self.parser.get(self.section, option, fallback=fallback)
 
-    def set(self, option, value, persist=True):
+    def set(self, option:str, value:str, persist=True):
         self.parser.set(self.section,option,value)
         if persist:
             context.debug('Persisting property {self.section}.{option}={value}')
