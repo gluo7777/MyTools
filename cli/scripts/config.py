@@ -46,6 +46,10 @@ class Properties:
     def has(self, option):
         return self.parser.has_option(self.section, option)
 
+    def set_if_missing(self, option, value, persist=True):
+        if not self.has(option):
+            self.set(option, value, persist)
+
     def persist(self):
         try:
             with open(CONFIG_FILE, mode='w') as fp:
