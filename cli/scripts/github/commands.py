@@ -13,20 +13,27 @@ def commands():
     pass
 
 @commands.command(name='create-repo')
-def create_repo():
-    name = click.prompt("Name")
-    description = click.prompt('Description',default='')
-    is_private = click.prompt('Private (true/false)', type=bool, default=False)
-    global_context.log(f"Creating new {'private' if is_private else 'public'} repository '{name}'")
-    repo_url = client.create_repository(name, description, is_private)
+@click.option('-n','--name', prompt=True, type=str)
+@click.option('-d','--description', prompt=True, type=str, default='')
+@click.option('-p','--private', is_flag=True, default=False)
+def create_repo(name: str, description: str, private: bool):
+    global_context.log(f"Creating new {'private' if private else 'public'} repository '{name}'")
+    repo_url = client.create_repository(name, description, private)
     if repo_url is not None:
-        global_context.log(f"Successfully created repository {repo_url}")
+        click.echo(f"Successfully created repository {repo_url}")
     else:
-        global_context.log(f"Failed to create repository")
+        click.echo(f"Failed to create repository")
 
 @commands.command()
 def issues():
     pass
+
+def prompt_if_null(name:str,in_type:str,val,default=None):
+    """Values that are required but not passed"""
+    if val is not None:
+        return val
+    else:
+        return click.prompt(text=name,type=in_type,default=default)
 
 def setup():
     prompt_if_missing('Username', GitHubProperties.USER)

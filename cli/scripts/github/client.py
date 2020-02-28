@@ -33,9 +33,17 @@ class Client():
             }
             ,timeout=int(self.props.get(GitHubProperties.TIMEOUT))
         )
-        if response.status_code == 201:
-            global_context.debug('Received 201 from /user/repos')
-            return response.json()['html_url']
-        else:
-            global_context.log(f"Received response code {response.status_code} from GitHub API with message '{response.json()['message'] or 'null'}'.")
-            return None
+        body = {}
+        try:
+            body = response.json()
+        except:
+            pass
+        return {
+            'success': response.status_code == 201
+            ,'name': body.get('name')
+            ,'owner': body.get('owner.login')
+            ,'https': body.get('html_url')
+            ,'ssh': body.get('ssh_url')
+            ,'error': body.get('message')
+            ,'errors': ','.join([error.get('message') for error in body.get('errors')])
+        }
