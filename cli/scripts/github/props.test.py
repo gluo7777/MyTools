@@ -12,6 +12,10 @@ class GitHubPropertiesTest(unittest.TestCase):
         self.assertIsNotNone(self.props.get(GitHubProperties.HEADER_CONTENT_TYPE))
         self.assertGreater(int(self.props.get(GitHubProperties.TIMEOUT)), 0)
 
+    def test_set_option(self):
+        self.props.set(GitHubProperties.TIMEOUT, '10')
+        self.assertTrue(self.props.has(GitHubProperties.TIMEOUT))
+
 def suite():
     loader = unittest.TestLoader()
     return loader.loadTestsFromTestCase(testCaseClass=GitHubPropertiesTest)

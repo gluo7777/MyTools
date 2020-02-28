@@ -16,22 +16,22 @@ class Client():
     def create_repository(self, name: str, description: str, is_private=True) -> str:
         response = requests.request(
             method='POST'
-            ,url=self.props.get(GitHubProperties.API_URL + '/user/repos')
+            ,url=self.props.get(GitHubProperties.API_URL) + '/user/repos'
             ,auth={
-                'username': GitHubProperties.USER
-                ,'password': GitHubProperties.ACCESS_TOKEN
+                'username': self.props.get(GitHubProperties.USER)
+                ,'password': self.props.get(GitHubProperties.ACCESS_TOKEN)
             }
             ,json={
                 'name': name
                 ,'description': description
                 ,'private': is_private
-                ,'homepage': 'https://github.com/' + GitHubProperties.USER + '/' + name
+                ,'homepage': 'https://github.com/' + self.props.get(GitHubProperties.USER) + '/' + name
             }
             ,headers={
-                'Accept': GitHubProperties.HEADER_ACCEPT
-                ,'Content-Type': GitHubProperties.HEADER_CONTENT_TYPE
+                'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
+                ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
             }
-            ,timeout=GitHubProperties.TIMEOUT
+            ,timeout=self.props.get(GitHubProperties.TIMEOUT)
         )
         if response.status_code == 201:
             global_context.debug('Received 201 from /user/repos')

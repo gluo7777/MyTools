@@ -14,8 +14,8 @@ def github():
 
 @github.command(name='create-repo')
 def create_repo():
-    name = click.prompt("Name", confirmation_prompt=True)
-    description = click.prompt('Description',default=None)
+    name = click.prompt("Name")
+    description = click.prompt('Description',default='')
     is_private = click.prompt('Private (true/false)', type=bool, default='false')
     global_context.log(f"Creating new {'private' if is_private else 'public'} repository '{name}'")
     repo_url = client.create_repository(name, description, is_private)
