@@ -16,7 +16,7 @@ def commands():
 def create_repo():
     name = click.prompt("Name")
     description = click.prompt('Description',default='')
-    is_private = click.prompt('Private (true/false)', type=bool, default='false')
+    is_private = click.prompt('Private (true/false)', type=bool, default=False)
     global_context.log(f"Creating new {'private' if is_private else 'public'} repository '{name}'")
     repo_url = client.create_repository(name, description, is_private)
     if repo_url is not None:

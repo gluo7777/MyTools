@@ -1,7 +1,7 @@
 import pip._vendor.requests as requests
 from cli.scripts.github.props import GitHubProperties
 import cli.scripts.context as global_context
-
+import json
 
 # https://github.com/github/gitignore
 
@@ -17,21 +17,21 @@ class Client():
         response = requests.request(
             method='POST'
             ,url=self.props.get(GitHubProperties.API_URL) + '/user/repos'
-            ,auth={
-                'username': self.props.get(GitHubProperties.USER)
-                ,'password': self.props.get(GitHubProperties.ACCESS_TOKEN)
-            }
-            ,json={
+            ,auth=(
+                self.props.get(GitHubProperties.USER)
+                ,self.props.get(GitHubProperties.ACCESS_TOKEN)
+            )
+            ,data=json.dumps({
                 'name': name
                 ,'description': description
                 ,'private': is_private
                 ,'homepage': 'https://github.com/' + self.props.get(GitHubProperties.USER) + '/' + name
-            }
+            })
             ,headers={
                 'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
                 ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
             }
-            ,timeout=self.props.get(GitHubProperties.TIMEOUT)
+            ,timeout=int(self.props.get(GitHubProperties.TIMEOUT))
         )
         if response.status_code == 201:
             global_context.debug('Received 201 from /user/repos')
