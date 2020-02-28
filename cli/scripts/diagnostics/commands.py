@@ -6,12 +6,12 @@ from cli.scripts.config import Properties
 
 props = Properties('Diagnostics')
 
-@click.group()
+@click.group(name="info")
 @click.pass_context
-def info(context):
+def commands(context):
     global_context.debug('Running info command')
 
-@info.command()
+@commands.command()
 @click.pass_context
 def system(context):
     global_context.debug("Obtaining system diagnostics...")

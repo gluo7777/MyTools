@@ -6,13 +6,13 @@ from cli.scripts.github.client import Client
 props = GitHubProperties()
 client = Client(props)
 
-@click.group()
-def github():
+@click.group(name="github")
+def commands():
     global_context.debug("Running github command...")
     setup()
     pass
 
-@github.command(name='create-repo')
+@commands.command(name='create-repo')
 def create_repo():
     name = click.prompt("Name")
     description = click.prompt('Description',default='')
@@ -24,7 +24,7 @@ def create_repo():
     else:
         global_context.log(f"Failed to create repository")
 
-@github.command()
+@commands.command()
 def issues():
     pass
 

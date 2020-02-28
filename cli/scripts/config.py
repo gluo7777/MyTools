@@ -25,10 +25,12 @@ class Properties:
             try:
                 os.makedirs(CONFIG_DIR,exist_ok=True)
                 open(CONFIG_FILE, 'w').close()
-                self.parser.read(CONFIG_FILE)
             except Exception as e:
                 context.log(f"Failed to create config file: {e}", error=True)
                 Properties.FAILED_ONCE = True
+
+        if not Properties.FAILED_ONCE:
+            self.parser.read(CONFIG_FILE)
 
         if not self.parser.has_section(self.section):
             self.parser.add_section(section)
@@ -43,10 +45,10 @@ class Properties:
             context.debug('Persisting property {self.section}.{option}={value}')
             self.persist()
     
-    def has(self, option):
+    def has(self, option:str) -> bool:
         return self.parser.has_option(self.section, option)
 
-    def set_if_missing(self, option, value, persist=True):
+    def set_if_missing(self, option:str, value:str, persist=True):
         if not self.has(option):
             self.set(option, value, persist)
 
@@ -55,4 +57,4 @@ class Properties:
             with open(CONFIG_FILE, mode='w') as fp:
                 self.parser.write(fp)
         except Exception as e:
-            context.log('Failed to persist properties: {e}', error=True)
+            context.log(f"Failed to persist properties: {e.__str__()}", error=True)
