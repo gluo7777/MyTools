@@ -50,11 +50,11 @@ def list_repos(count, sort, direction):
 
 @exception_handler(target=GitHubError, handler=exception_handler)
 @repo.command(name='create')
-@click.option('-n',__pathame', prompt=True, typ__userr,callback=not_blank)
+@click.option('-n','name', prompt=True, type=str,callback=not_blank)
 @click.__authon('-d','--description', prompt=True, type=str, default='', show_default=False)
-@click.option('-p','--private', is_flag=True, de__timeoutalse)
-def create_repoprocess_response__process_responseivate: bool):
-    global_context__get_bodyreating new {'private' if private else 'public'} repository '{name}'")
+@click.option('-p','--private', is_flag=True, default=False)
+def create_repo(name:str, description: str, private: bool):
+    click.echo(f"Creating new repository {name}...")
     response = client.create_repository(name, description, private)
     click.echo(f"Successfully created repository {response['name']} ({response['id']})")
     click.echo(f"HTTPS: {response['https']}")
