@@ -12,6 +12,11 @@ def not_blank(ctx, param, value):
     else:
         return value
 
+def echo_failure(msg='Failed to perform action', response: dict={}):
+    click.echo(msg)
+    click.echo(response['error'], err=True)
+    click.echo(response['errors'], err=True)
+
 @click.group(name="github")
 def commands():
     global_context.debug("Running github command...")
@@ -23,15 +28,21 @@ def commands():
 def repo():
     pass
 
-def _generate_output():
-    for idx in range(50000):
-        yield "Line %d\n" % idx
+def get_pretty_printed_repos(repo: dict, *args):
+    repo = client.list_repositories(args)
+    if repo.get('error'):
+        echo_failure('Failed to retrieve repositories', repo)
+        return None
+    else:
+        yield {
+            'id': repo.get('id')
+        }
 
 @repo.command(name='list')
 def list_repos():
     click.clear()
     repos = client.get_repos()
-    click.echo_via_pager(_generate_output())
+    click.echo_via_pager(get_pretty_printed_repos())
 
 @repo.command(name='create')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank)
@@ -46,9 +57,7 @@ def create_repo(name: str, description: str, private: bool):
         click.echo(f"SSH: {response['ssh']}")
         click.echo(f"git clone {response['ssh']} .")
     else:
-        click.echo(f"Failed to create repository")
-        click.echo(response['error'], err=True)
-        click.echo(response['errors'], err=True)
+        echo_failure('Failed to create repository', response)
 
 @repo.command(name='delete')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank, confirmation_prompt=True)
@@ -58,9 +67,7 @@ def delete_repo(name: str):
     if response['success']:
         click.echo(f"Successfully deleted {name}")
     else:
-        click.echo(f"Failed to delete repository")
-        click.echo(response['error'], err=True)
-        click.echo(response['errors'], err=True)
+        echo_failure("Failed to delete repository", response)
 
 @commands.command()
 def issues():
