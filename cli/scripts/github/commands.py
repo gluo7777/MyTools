@@ -7,7 +7,7 @@ from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
 
 props = GitHubProperties()
 client = Client(props)
-error_handler = GitHubErrorHandler(out_cb=lambda msg: click.echo(msg, err=True)).build()
+error_handler = GitHubErrorHandler(GitHubErrorHandler.standard_error).build()
 
 def not_blank(ctx, param, value):
     if value is None or value == '':
@@ -16,7 +16,7 @@ def not_blank(ctx, param, value):
         return value
 
 @click.group(name="github")
-@exception_handler(target=GitHubError, handler=exception_handler)
+@exception_handler(target=GitHubError, handler=error_handler)
 def commands():
     global_context.debug("Running github command...")
     prompt_if_missing('Username', GitHubProperties.USER)
@@ -37,7 +37,7 @@ def get_pretty_printed_repos():
 @click.option('-c','--count', is_flag=True, type=int, help="Print number of repositories", default=False)
 @click.option('-s','--sort', type=click.Choice(['created', 'updated', 'pushed', 'full_name'], case_sensitive=False))
 @click.option('-d','--direction',type=click.Choice(['asc','desc'], case_sensitive=False))
-@exception_handler(target=GitHubError, handler=exception_handler)
+@exception_handler(target=GitHubError, handler=error_handler)
 def list_repos(count, sort, direction):
     if count:
         size = 0
@@ -52,7 +52,7 @@ def list_repos(count, sort, direction):
 @click.option('-n','name', prompt=True, type=str,callback=not_blank)
 @click.option('-d','--description', prompt=True, type=str, default='', show_default=False)
 @click.option('-p','--private', is_flag=True, default=False)
-@exception_handler(target=GitHubError, handler=exception_handler)
+@exception_handler(target=GitHubError, handler=error_handler)
 def create_repo(name:str, description: str, private: bool):
     click.echo(f"Creating new repository {name}...")
     response = client.create_repository(name, description, private)
@@ -63,7 +63,7 @@ def create_repo(name:str, description: str, private: bool):
 
 @repo.command(name='delete')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank, confirmation_prompt=True)
-@exception_handler(target=GitHubError, handler=exception_handler)
+@exception_handler(target=GitHubError, handler=error_handler)
 def delete_repo(name: str):
     click.echo(f"Deleting repository {name}...")
     response = client.delete_repository(name)

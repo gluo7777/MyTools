@@ -21,3 +21,7 @@ class GitHubErrorHandler():
             msg = f"{title}\n{errors}"
             self.out_cb(msg)
         return error_handler
+
+    @staticmethod
+    def standard_error(msg: str) -> None:
+        click.echo(msg, err=True)

@@ -45,6 +45,8 @@ class Client():
             raise GitHubError()
         body = self.__get_body(response)
         if response.status_code != successful_status_code:
+            if type(body) != dict:
+                raise GitHubError()
             title = body.get('error','Error calling GitHub API')
             errors = [error.get('message') for error in body.get('errors',[])]
             raise GitHubError(title=title,errors=errors)
