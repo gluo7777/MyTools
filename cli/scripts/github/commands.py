@@ -40,7 +40,9 @@ def get_pretty_printed_repos():
 
 @repo.command(name='list')
 @click.option('-c','--count', is_flag=True, type=int, help="Print number of repositories", default=False)
-def list_repos(count):
+@click.option('-s','--sort', type=click.Choice(['created', 'updated', 'pushed', 'full_name'], case_sensitive=False))
+@click.option('-d','--direction',type=click.Choice(['asc','desc'], case_sensitive=False))
+def list_repos(count, sort, direction):
     if count:
         size = 0
         for repo in client.get_repositories():

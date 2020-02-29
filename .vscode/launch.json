@@ -5,12 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "MyTools: GitHub Create Repository",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/cli/scripts/main.py",
             "console": "integratedTerminal",
-            "args": ["--verbose","github","create-repo"]
+            "args": [
+                "--verbose",
+                "github",
+                "create-repo"
+            ]
         }
     ]
 }

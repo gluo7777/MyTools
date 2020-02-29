@@ -16,9 +16,5 @@ class GitHubPropertiesTest(unittest.TestCase):
         self.props.set(GitHubProperties.TIMEOUT, '10')
         self.assertTrue(self.props.has(GitHubProperties.TIMEOUT))
 
-def suite():
-    loader = unittest.TestLoader()
-    return loader.loadTestsFromTestCase(testCaseClass=GitHubPropertiesTest)
-
 if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

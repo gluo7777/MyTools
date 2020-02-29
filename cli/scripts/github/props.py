@@ -1,4 +1,5 @@
 from cli.scripts.config import Properties
+import unittest
 
 class GitHubProperties(Properties):
     
