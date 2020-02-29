@@ -23,6 +23,16 @@ def commands():
 def repo():
     pass
 
+def _generate_output():
+    for idx in range(50000):
+        yield "Line %d\n" % idx
+
+@repo.command(name='list')
+def list_repos():
+    click.clear()
+    repos = client.get_repos()
+    click.echo_via_pager(_generate_output())
+
 @repo.command(name='create')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank)
 @click.option('-d','--description', prompt=True, type=str, default='', show_default=False)

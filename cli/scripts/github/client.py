@@ -2,36 +2,47 @@ import pip._vendor.requests as requests
 from cli.scripts.github.props import GitHubProperties
 import cli.scripts.context as global_context
 import json
+from typing import List
 
 # https://github.com/github/gitignore
 
 class Client():
     def __init__(self, props: GitHubProperties):
         self.props = props
-        pass
+
+    def path(self,base=self.props.get(GitHubProperties.API_URL), *paths: List[str]):
+        return base + "/" + "/".join(paths)
+
+    def auth(self):
+        return (self.props.get(GitHubProperties.USER),self.props.get(GitHubProperties.ACCESS_TOKEN))
+
+    def headers(self):
+        return {
+            'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
+            ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
+        }
+
+    def timeout(self):
+        return int(self.props.get(GitHubProperties.TIMEOUT))
+
+    def user(self):
+        return self.props.get(GitHubProperties.USER)
 
     def issues(self):
         pass
 
     def create_repository(self, name: str, description: str, is_private=True) -> str:
-        response = requests.request(
-            method='POST'
-            ,url=self.props.get(GitHubProperties.API_URL) + '/user/repos'
-            ,auth=(
-                self.props.get(GitHubProperties.USER)
-                ,self.props.get(GitHubProperties.ACCESS_TOKEN)
-            )
+        response = requests.post(
+            url=self.path('user','repos')
+            ,auth=self.auth()
             ,data=json.dumps({
                 'name': name
                 ,'description': description
                 ,'private': is_private
-                ,'homepage': 'https://github.com/' + self.props.get(GitHubProperties.USER) + '/' + name
+                ,'homepage': self.path(base='https://github.com/',paths=[self.props.get(GitHubProperties.USER),name])
             })
-            ,headers={
-                'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
-                ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
-            }
-            ,timeout=int(self.props.get(GitHubProperties.TIMEOUT))
+            ,headers=self.headers()
+            ,timeout=self.timeout()
         )
         body = {}
         try:
@@ -50,21 +61,11 @@ class Client():
         }
 
     def delete_repository(self, name: str):
-        response = requests.request(
-            method='DELETE'
-            ,url=self.props.get(GitHubProperties.API_URL) 
-                + '/repos/' 
-                + self.props.get(GitHubProperties.USER)
-                + '/' + name
-            ,auth=(
-                self.props.get(GitHubProperties.USER)
-                ,self.props.get(GitHubProperties.ACCESS_TOKEN)
-            )
-            ,headers={
-                'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
-                ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
-            }
-            ,timeout=int(self.props.get(GitHubProperties.TIMEOUT))
+        response = requests.delete(
+            url=self.path('repos',self.user(),name)
+            ,auth=self.auth()
+            ,headers=self.headers()
+            ,timeout=self.timeout()
         )
         body = {}
         try:
