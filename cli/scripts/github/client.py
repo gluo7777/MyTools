@@ -57,17 +57,20 @@ class Client():
         pass
 
     def get_repositories(self) -> List[dict]:
-        response = requests.get(
-            url=self.__path('users',self.__user(),'repos')
-            ,auth=self.__auth()
-            ,headers=self.__headers(
-                ('User-Agent',self.__user())
+        next_page = self.__path('users',self.__user(),'repos')
+        while next_page:
+            response = requests.get(
+                url=next_page
+                ,auth=self.__auth()
+                ,headers=self.__headers(
+                    ('User-Agent',self.__user())
+                )
+                ,timeout=self.__timeout()
             )
-            ,timeout=self.__timeout()
-        )
-        self.__process_response(response)
-        for repo in self.__get_body(response):
-            yield repo
+            body = self.__process_response(response)
+            for repo in body:
+                yield repo
+            next_page = response.links.get('next',{}).get('url')
 
     def create_repository(self, name: str, description: str, is_private=True) -> dict:
         response = requests.post(
