@@ -28,20 +28,20 @@ def commands():
 def repo():
     pass
 
-def get_pretty_printed_repos(repo: dict, *args):
-    repo = client.list_repositories(args)
-    if repo.get('error'):
-        echo_failure('Failed to retrieve repositories', repo)
-        return None
-    else:
-        yield {
-            'id': repo.get('id')
-        }
+def get_pretty_printed_repos(*args):
+    repos = client.get_repositories(args)
+    i = 0
+    for repo in repos:
+        if repo.get('error'):
+            echo_failure('Failed to retrieve repositories', repo)
+            return None
+        else:
+            yield f"{str(i).zfill(4)} : {repo.get('name')} ({repo.get('id')})\n"
+            i += 1
 
 @repo.command(name='list')
 def list_repos():
     click.clear()
-    repos = client.get_repos()
     click.echo_via_pager(get_pretty_printed_repos())
 
 @repo.command(name='create')
