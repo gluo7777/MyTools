@@ -40,10 +40,39 @@ class Client():
             pass
         return {
             'success': response.status_code == 201
+            ,'id': body.get('id')
             ,'name': body.get('name')
             ,'owner': body.get('owner.login')
             ,'https': body.get('html_url')
             ,'ssh': body.get('ssh_url')
+            ,'error': body.get('message')
+            ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
+        }
+
+    def delete_repository(self, name: str):
+        response = requests.request(
+            method='DELETE'
+            ,url=self.props.get(GitHubProperties.API_URL) 
+                + '/repos/' 
+                + self.props.get(GitHubProperties.USER)
+                + '/' + name
+            ,auth=(
+                self.props.get(GitHubProperties.USER)
+                ,self.props.get(GitHubProperties.ACCESS_TOKEN)
+            )
+            ,headers={
+                'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
+                ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
+            }
+            ,timeout=int(self.props.get(GitHubProperties.TIMEOUT))
+        )
+        body = {}
+        try:
+            body = response.json()
+        except:
+            pass
+        return {
+            'success': response.status_code == 204
             ,'error': body.get('message')
             ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
         }
