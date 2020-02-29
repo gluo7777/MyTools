@@ -59,7 +59,7 @@ class Client():
             url=self.__path('users',self.__user(),'repos')
             ,auth=self.__auth()
             ,headers=self.__headers(
-                ('User-Agent',self.user())
+                ('User-Agent',self.__user())
             )
             ,timeout=self.__timeout()
         )

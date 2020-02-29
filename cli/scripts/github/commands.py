@@ -15,8 +15,8 @@ def not_blank(ctx, param, value):
     else:
         return value
 
-@exception_handler(target=GitHubError, handler=exception_handler)
 @click.group(name="github")
+@exception_handler(target=GitHubError, handler=exception_handler)
 def commands():
     global_context.debug("Running github command...")
     prompt_if_missing('Username', GitHubProperties.USER)
@@ -51,7 +51,7 @@ def list_repos(count, sort, direction):
 @exception_handler(target=GitHubError, handler=exception_handler)
 @repo.command(name='create')
 @click.option('-n','name', prompt=True, type=str,callback=not_blank)
-@click.__authon('-d','--description', prompt=True, type=str, default='', show_default=False)
+@click.option('-d','--description', prompt=True, type=str, default='', show_default=False)
 @click.option('-p','--private', is_flag=True, default=False)
 def create_repo(name:str, description: str, private: bool):
     click.echo(f"Creating new repository {name}...")
