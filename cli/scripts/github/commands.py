@@ -14,15 +14,20 @@ def commands():
 
 @commands.command(name='create-repo')
 @click.option('-n','--name', prompt=True, type=str)
-@click.option('-d','--description', prompt=True, type=str, default='')
+@click.option('-d','--description', prompt=True, type=str, default='', show_default=False)
 @click.option('-p','--private', is_flag=True, default=False)
 def create_repo(name: str, description: str, private: bool):
     global_context.log(f"Creating new {'private' if private else 'public'} repository '{name}'")
-    repo_url = client.create_repository(name, description, private)
-    if repo_url is not None:
-        click.echo(f"Successfully created repository {repo_url}")
+    response = client.create_repository(name, description, private)
+    if response['success']:
+        click.echo(f"Successfully created repository {response['name']}")
+        click.echo(f"HTTPS: {response['https']}")
+        click.echo(f"SSH: {response['ssh']}")
+        click.echo(f"git clone {response['ssh']} .")
     else:
         click.echo(f"Failed to create repository")
+        click.echo(response['error'], err=True)
+        click.echo(response['errors'], err=True)
 
 @commands.command()
 def issues():

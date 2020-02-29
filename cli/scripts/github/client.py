@@ -45,5 +45,5 @@ class Client():
             ,'https': body.get('html_url')
             ,'ssh': body.get('ssh_url')
             ,'error': body.get('message')
-            ,'errors': ','.join([error.get('message') for error in body.get('errors')])
+            ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
         }
