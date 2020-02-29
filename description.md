@@ -2,6 +2,8 @@
 
 A command line utility that accomplishes various things
 
+[repo](https://github.com/gluo7777/mytools)
+
 ## Current Functionalities
 
 - GitHub `mytool github`
