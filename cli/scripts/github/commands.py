@@ -28,10 +28,9 @@ def commands():
 def repo():
     pass
 
-def get_pretty_printed_repos(*args):
-    repos = client.get_repositories(args)
+def get_pretty_printed_repos():
     i = 0
-    for repo in repos:
+    for repo in client.get_repositories():
         if repo.get('error'):
             echo_failure('Failed to retrieve repositories', repo)
             return None
@@ -40,9 +39,16 @@ def get_pretty_printed_repos(*args):
             i += 1
 
 @repo.command(name='list')
-def list_repos():
-    click.clear()
-    click.echo_via_pager(get_pretty_printed_repos())
+@click.option('-c','--count', is_flag=True, type=int, help="Print number of repositories", default=False)
+def list_repos(count):
+    if count:
+        size = 0
+        for repo in client.get_repositories():
+            size += 1
+        click.echo(f"Number of repositories = {size}.")
+    else:
+        click.clear()
+        click.echo_via_pager(get_pretty_printed_repos())
 
 @repo.command(name='create')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank)

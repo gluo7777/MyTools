@@ -43,7 +43,7 @@ class Client():
             pass
         return {} if body is None else body
 
-    def get_repositories(self, *args):
+    def get_repositories(self):
         response = requests.get(
             url=self.path('users',self.user(),'repos')
             ,auth=self.auth()
