@@ -1,9 +1,9 @@
 import pip._vendor.requests as requests
 from cli.scripts.github.props import GitHubProperties
+from cli.scripts.github.exceptions import GitHubError
 import cli.scripts.context as global_context
 import json
-from typing import List
-from typing import Tuple
+from typing import List,Tuple
 
 # https://github.com/github/gitignore
 
@@ -11,13 +11,13 @@ class Client():
     def __init__(self, props: GitHubProperties):
         self.props = props
 
-    def path(self,*paths: str):
+    def __path(self,*paths: str) -> str:
         return self.props.get(GitHubProperties.API_URL) + "/" + "/".join(paths)
 
-    def auth(self):
+    def __auth(self) -> Tuple[str,str]:
         return (self.props.get(GitHubProperties.USER),self.props.get(GitHubProperties.ACCESS_TOKEN))
 
-    def headers(self, *other_headers: List[Tuple[str,str]]):
+    def __headers(self, *other_headers: List[Tuple[str,str]]) -> dict:
         headers = {
             'Accept': self.props.get(GitHubProperties.HEADER_ACCEPT)
             ,'Content-Type': self.props.get(GitHubProperties.HEADER_CONTENT_TYPE)
@@ -26,16 +26,13 @@ class Client():
             headers[name] = value
         return headers
 
-    def timeout(self):
+    def __timeout(self) -> int:
         return int(self.props.get(GitHubProperties.TIMEOUT))
 
-    def user(self):
+    def __user(self) -> str:
         return self.props.get(GitHubProperties.USER)
 
-    def issues(self):
-        pass
-
-    def get_body(self, response: requests.Response):
+    def __get_body(self, response: requests.Response) -> dict:
         body = {}
         try:
             body = response.json()
@@ -43,59 +40,60 @@ class Client():
             pass
         return {} if body is None else body
 
-    def get_repositories(self):
+    def __process_response(self, response: requests.Response, successful_status_code: int = 200) -> dict:
+        if not response:
+            raise GitHubError()
+        body = self.__get_body(response)
+        if response.status_code != successful_status_code:
+            title = body.get('error','Error calling GitHub API')
+            errors = [error.get('message') for error in body.get('errors',[])]
+            raise GitHubError(title=title,errors=errors)
+        else:
+            return body
+
+    def issues(self):
+        pass
+
+    def get_repositories(self) -> List[dict]:
         response = requests.get(
-            url=self.path('users',self.user(),'repos')
-            ,auth=self.auth()
-            ,headers=self.headers(
+            url=self.__path('users',self.__user(),'repos')
+            ,auth=self.__auth()
+            ,headers=self.__headers(
                 ('User-Agent',self.user())
             )
-            ,timeout=self.timeout()
+            ,timeout=self.__timeout()
         )
-        body = self.get_body(response)
-        if response.status_code != 200:
-            return {
-                'error': body.get('message','Failed to retrieve repositories')
-                ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
-            }
-        for repo in body:
+        self.__process_response(response)
+        for repo in self.__get_body(response):
             yield repo
 
-    def create_repository(self, name: str, description: str, is_private=True) -> str:
+    def create_repository(self, name: str, description: str, is_private=True) -> dict:
         response = requests.post(
-            url=self.path('user','repos')
-            ,auth=self.auth()
+            url=self.__path('user','repos')
+            ,auth=self.__auth()
             ,data=json.dumps({
                 'name': name
                 ,'description': description
                 ,'private': is_private
-                ,'homepage': '/'.join(['https://github.com/',self.user(),name])
+                ,'homepage': '/'.join(['https://github.com/',self.__user(),name])
             })
-            ,headers=self.headers()
-            ,timeout=self.timeout()
+            ,headers=self.__headers()
+            ,timeout=self.__timeout()
         )
-        body = self.get_body(response)
+        body = self.__process_response(response, 201)
         return {
-            'success': response.status_code == 201
-            ,'id': body.get('id')
+            'id': body.get('id')
             ,'name': body.get('name')
             ,'owner': body.get('owner.login')
             ,'https': body.get('html_url')
             ,'ssh': body.get('ssh_url')
-            ,'error': body.get('message')
-            ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
         }
 
-    def delete_repository(self, name: str):
+    def delete_repository(self, name: str) -> None:
         response = requests.delete(
-            url=self.path('repos',self.user(),name)
-            ,auth=self.auth()
-            ,headers=self.headers()
-            ,timeout=self.timeout()
+            url=self.__path('repos',self.__user(),name)
+            ,auth=self.__auth()
+            ,headers=self.__headers()
+            ,timeout=self.__timeout()
         )
-        body = self.get_body(response)
-        return {
-            'success': response.status_code == 204
-            ,'error': body.get('message')
-            ,'errors': ','.join([error.get('message') for error in body.get('errors')]) if body.get('errors') else None
-        }
+        self.__process_response(response, 204)

@@ -2,9 +2,12 @@ import click
 import cli.scripts.context as global_context
 from cli.scripts.github.props import GitHubProperties
 from cli.scripts.github.client import Client
+from cli.scripts.exceptions import exception_handler
+from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
 
 props = GitHubProperties()
 client = Client(props)
+error_handler = GitHubErrorHandler(out_cb=lambda msg: click.echo(msg, err=True)).build()
 
 def not_blank(ctx, param, value):
     if value is None or value == '':
@@ -12,11 +15,7 @@ def not_blank(ctx, param, value):
     else:
         return value
 
-def echo_failure(msg='Failed to perform action', response: dict={}):
-    click.echo(msg)
-    click.echo(response['error'], err=True)
-    click.echo(response['errors'], err=True)
-
+@exception_handler(target=GitHubError, handler=exception_handler)
 @click.group(name="github")
 def commands():
     global_context.debug("Running github command...")
@@ -31,13 +30,10 @@ def repo():
 def get_pretty_printed_repos():
     i = 0
     for repo in client.get_repositories():
-        if repo.get('error'):
-            echo_failure('Failed to retrieve repositories', repo)
-            return None
-        else:
-            yield f"{str(i).zfill(4)} : {repo.get('name')} ({repo.get('id')})\n"
-            i += 1
+        yield f"{str(i).zfill(4)} : {repo.get('name')} ({repo.get('id')})\n"
+        i += 1
 
+@exception_handler(target=GitHubError, handler=exception_handler)
 @repo.command(name='list')
 @click.option('-c','--count', is_flag=True, type=int, help="Print number of repositories", default=False)
 @click.option('-s','--sort', type=click.Choice(['created', 'updated', 'pushed', 'full_name'], case_sensitive=False))
@@ -52,30 +48,26 @@ def list_repos(count, sort, direction):
         click.clear()
         click.echo_via_pager(get_pretty_printed_repos())
 
+@exception_handler(target=GitHubError, handler=exception_handler)
 @repo.command(name='create')
-@click.option('-n','--name', prompt=True, type=str,callback=not_blank)
-@click.option('-d','--description', prompt=True, type=str, default='', show_default=False)
-@click.option('-p','--private', is_flag=True, default=False)
-def create_repo(name: str, description: str, private: bool):
-    global_context.log(f"Creating new {'private' if private else 'public'} repository '{name}'")
+@click.option('-n',__pathame', prompt=True, typ__userr,callback=not_blank)
+@click.__authon('-d','--description', prompt=True, type=str, default='', show_default=False)
+@click.option('-p','--private', is_flag=True, de__timeoutalse)
+def create_repoprocess_response__process_responseivate: bool):
+    global_context__get_bodyreating new {'private' if private else 'public'} repository '{name}'")
     response = client.create_repository(name, description, private)
-    if response['success']:
-        click.echo(f"Successfully created repository {response['name']} ({response['id']})")
-        click.echo(f"HTTPS: {response['https']}")
-        click.echo(f"SSH: {response['ssh']}")
-        click.echo(f"git clone {response['ssh']} .")
-    else:
-        echo_failure('Failed to create repository', response)
+    click.echo(f"Successfully created repository {response['name']} ({response['id']})")
+    click.echo(f"HTTPS: {response['https']}")
+    click.echo(f"SSH: {response['ssh']}")
+    click.echo(f"git clone {response['ssh']} .")
 
+@exception_handler(target=GitHubError, handler=exception_handler)
 @repo.command(name='delete')
 @click.option('-n','--name', prompt=True, type=str,callback=not_blank, confirmation_prompt=True)
 def delete_repo(name: str):
     click.echo(f"Deleting repository {name}...")
     response = client.delete_repository(name)
-    if response['success']:
-        click.echo(f"Successfully deleted {name}")
-    else:
-        echo_failure("Failed to delete repository", response)
+    click.echo(f"Successfully deleted {name}")
 
 @commands.command()
 def issues():
