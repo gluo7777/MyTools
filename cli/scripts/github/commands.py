@@ -27,9 +27,9 @@ def commands():
 def repo():
     pass
 
-def get_pretty_printed_repos():
-    i = 0
-    for repo in client.get_repositories():
+def get_pretty_printed_repos(*args):
+    i = 1
+    for repo in client.get_repositories(*args):
         yield f"{str(i).zfill(4)} : {repo.get('name')} ({repo.get('id')})\n"
         i += 1
 
@@ -40,13 +40,10 @@ def get_pretty_printed_repos():
 @exception_handler(target=GitHubError, handler=error_handler)
 def list_repos(count, sort, direction):
     if count:
-        size = 0
-        for repo in client.get_repositories():
-            size += 1
-        click.echo(f"Number of repositories = {size}.")
+        click.echo(f"Number of repositories = {client.get_repositories_size(sort,direction)}.")
     else:
         click.clear()
-        click.echo_via_pager(get_pretty_printed_repos())
+        click.echo_via_pager(get_pretty_printed_repos(sort,direction))
 
 @repo.command(name='create')
 @click.option('-n','name', prompt=True, type=str,callback=not_blank)

@@ -56,11 +56,12 @@ class Client():
     def issues(self):
         pass
 
-    def get_repositories(self) -> List[dict]:
+    def get_repositories(self,sort:str='full_name',direction:str='asc') -> List[dict]:
         next_page = self.__path('users',self.__user(),'repos')
         while next_page:
             response = requests.get(
                 url=next_page
+                ,params={'sort': sort, 'direction': direction}
                 ,auth=self.__auth()
                 ,headers=self.__headers(
                     ('User-Agent',self.__user())
@@ -71,6 +72,12 @@ class Client():
             for repo in body:
                 yield repo
             next_page = response.links.get('next',{}).get('url')
+
+    def get_repositories_size(self, *args) -> int:
+        size = 0
+        for repo in self.get_repositories(*args):
+            size += 1
+        return size
 
     def create_repository(self, name: str, description: str, is_private=True) -> dict:
         response = requests.post(
