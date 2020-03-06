@@ -4,23 +4,19 @@ from cli.scripts.github.props import GitHubProperties
 from cli.scripts.github.client import Client
 from cli.scripts.exceptions import exception_handler
 from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
+from cli.scripts.cli import CLI
 
 props = GitHubProperties()
+cli = CLI(props)
 client = Client(props)
 error_handler = GitHubErrorHandler(GitHubErrorHandler.standard_error).build()
-
-def not_blank(ctx, param, value):
-    if value is None or value == '':
-        raise click.BadParameter('cannot be blank')
-    else:
-        return value
 
 @click.group(name="github")
 @exception_handler(target=GitHubError, handler=error_handler)
 def commands():
     global_context.debug("Running github command...")
-    prompt_if_missing('Username', GitHubProperties.USER)
-    prompt_if_missing('Access Token', GitHubProperties.ACCESS_TOKEN, sensitive=True)
+    cli.prompt_if_missing('Username', GitHubProperties.USER)
+    cli.prompt_if_missing('Access Token', GitHubProperties.ACCESS_TOKEN, sensitive=True)
     pass
 
 @commands.group(name='repo')
@@ -59,7 +55,7 @@ def create_repo(name:str, description: str, private: bool):
     click.echo(f"git clone {response['ssh']} .")
 
 @repo.command(name='delete')
-@click.option('-n','--name', prompt=True, type=str,callback=not_blank, confirmation_prompt=True)
+@click.option('-n','--name', prompt=True, type=str,callback=cli.not_blank, confirmation_prompt=True)
 @exception_handler(target=GitHubError, handler=error_handler)
 def delete_repo(name: str):
     click.echo(f"Deleting repository {name}...")
@@ -69,8 +65,3 @@ def delete_repo(name: str):
 @commands.command()
 def issues():
     pass
-
-def prompt_if_missing(name,option,sensitive=False,confirm=False):
-    if not props.has(option):
-        value = click.prompt(f"{name} is not set. Please enter {name}",hide_input=sensitive,confirmation_prompt=confirm)
-        props.set(option, value)

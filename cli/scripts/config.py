@@ -3,11 +3,10 @@ from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
 import cli.scripts.context as context
 
-CONFIG_DIR = os.path.expanduser('~/mytool')
-CONFIG_FILE = os.path.abspath(CONFIG_DIR + '/' + 'config.ini')
-
 class Properties:
 
+    CONFIG_DIR = os.path.expanduser('~/mytools')
+    CONFIG_FILE = os.path.abspath(CONFIG_DIR + '/' + 'config.ini')
     FAILED_ONCE = False
 
     def __init__(self, section):
@@ -20,7 +19,7 @@ class Properties:
             interpolation=ExtendedInterpolation()
         )
 
-        if not os.path.exists(CONFIG_FILE) and not Properties.FAILED_ONCE:
+        if not os.path.exists(CONFIG_FILE) and not FAILED_ONCE:
             context.log(f"Creating config file at {CONFIG_FILE}")
             try:
                 os.makedirs(CONFIG_DIR,exist_ok=True)
@@ -29,7 +28,7 @@ class Properties:
                 context.log(f"Failed to create config file: {e}", error=True)
                 Properties.FAILED_ONCE = True
 
-        if not Properties.FAILED_ONCE:
+        if not FAILED_ONCE:
             self.parser.read(CONFIG_FILE)
 
         if not self.parser.has_section(self.section):
