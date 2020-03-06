@@ -19,6 +19,10 @@ def cli(context, verbose):
         click.echo("Unable to initialize CLI context due to following error: %s" % e)
         return 1
 
-cli.add_command(diagnostics.commands)
-cli.add_command(github.commands)
-cli()
+def entry():
+    cli.add_command(diagnostics.commands)
+    cli.add_command(github.commands)
+    cli()
+
+if __name__ == "__main__":
+    entry()

@@ -4,8 +4,8 @@ with open("readme.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='mytools-automation-gluo7777',
-    version='0.0.1',
+    name='mytools',
+    version='1.0.0',
     author="William Luo",
     author_email="gluo7777@gmail.com",
     description="Utilities for local automation",
@@ -19,7 +19,7 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        mytool=cli.scripts.main
+        mytools=cli.scripts.main:entry
     ''',
     classifiers=[
         "Programming Language :: Python :: 3",

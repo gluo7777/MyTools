@@ -36,4 +36,7 @@ A command line utility that accomplishes various things
 
 [Official Documentation](https://docs.python.org/3/distutils/builtdist.html)
 
+1. (Local) `python setup.py install`
+
 1. Generate built distributions for tar,zip,msi extensions which should cover all 3 major platforms
+> python setup.py bdist --format=zip,gztar,wininst
