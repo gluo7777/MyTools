@@ -14,6 +14,7 @@ class Client():
 
     def __init__(self, props: GoogleProperties):
         self.props = props
+        self._timeout = int(self.props.get(self.props.TIMEOUT))
 
     def _random_token(self):
         # TODO: make this random
@@ -31,22 +32,20 @@ class Client():
         return headers
 
     def _transform_scopes(self, scopes):
-        return ','.join([ self.API + '/auth' + scope for scope in scopes ])
+        return ','.join([ self.API + '/auth/' + scope for scope in scopes ])
 
     def consent_url(self, scopes) -> str:
         state_token = self._random_token()
         self.props.set(self.props.STATE_TOKEN, state_token)
-        return f"""\
-            {self.AUTH_URL}\
-            ?access_type=offline\
-            &client_id={self.props.get(self.props.ACCESS_TOKEN)}\
-            &redirect_uri={self.props.get(self.props.REDIRECT)}\
-            &response_type=code\
-            &state={state_token}\
-            &scope={self._transform_scopes(scopes)}\
-            &include_granted_scopes=true\
-            &prompt=consent\
-        """
+        return  f'{self.AUTH_URL}'\
+                + f'?access_type=offline'\
+                + f'&client_id={self.props.get(self.props.CLIENT_ID)}'\
+                + f'&redirect_uri={self.REDIRECT}'\
+                + f'&response_type=code'\
+                + f'&state={state_token}'\
+                + f'&scope={self._transform_scopes(scopes)}'\
+                + f'&include_granted_scopes=true'\
+                + f'&prompt=consent'\
 
     def access_token(self, refresh:bool=False) -> str:
         response = requests.post(
@@ -63,22 +62,23 @@ class Client():
                                 else 'authorization_code'
                 ,'redirect_uri': self.props.get(self.REDIRECT)
             }
-            ,timeout=10
+            ,timeout=self._timeout
         )
-        body = response.json()
         if response.ok:
+            body = response.json()
             return {
                 'access_token': body.access_token
                 ,'refresh_token': body.refresh_token
             }
         else:
-            raise ClientException(f'Failed to request access token: [{body.error}] {body.error_description}')
+            raise ClientException(f'\nstatus={response.status_code}\nmessage={response.text}')
 
     def revoke_access(self):
         response = requests.post(
             url=self.REVOKE_URL
             ,headers=self._application_x_www_form_urlencoded()
             ,query={'token': self.props.get(self.props.ACCESS_TOKEN)}
+            ,timeout=self._timeout
         )
         if not response.ok:
             body = response.json()
@@ -88,3 +88,6 @@ class ClientException(Exception):
     def __init__(self,msg:str='Error calling Google Cloud Services',*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.msg = msg
+
+    def __str__(self):
+        return self.msg

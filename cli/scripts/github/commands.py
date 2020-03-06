@@ -4,7 +4,7 @@ from cli.scripts.github.props import GitHubProperties
 from cli.scripts.github.client import Client
 from cli.scripts.exceptions import exception_handler
 from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
-from cli.scripts.cli import CLI
+from cli.scripts.utility import CLI
 
 props = GitHubProperties()
 cli = CLI(props)
@@ -42,7 +42,7 @@ def list_repos(count, sort, direction):
         click.echo_via_pager(get_pretty_printed_repos(sort,direction))
 
 @repo.command(name='create')
-@click.option('-n','name', prompt=True, type=str,callback=not_blank)
+@click.option('-n','name', prompt=True, type=str,callback=cli.not_blank)
 @click.option('-d','--description', prompt=True, type=str, default='', show_default=False)
 @click.option('-p','--private', is_flag=True, default=False)
 @exception_handler(target=GitHubError, handler=error_handler)

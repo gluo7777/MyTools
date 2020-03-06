@@ -19,20 +19,20 @@ class Properties:
             interpolation=ExtendedInterpolation()
         )
 
-        if not os.path.exists(CONFIG_FILE) and not FAILED_ONCE:
-            context.log(f"Creating config file at {CONFIG_FILE}")
+        if not os.path.exists(self.CONFIG_FILE) and not self.FAILED_ONCE:
+            context.log(f"Creating config file at {self.CONFIG_FILE}")
             try:
-                os.makedirs(CONFIG_DIR,exist_ok=True)
-                open(CONFIG_FILE, 'w').close()
+                os.makedirs(self.CONFIG_DIR,exist_ok=True)
+                open(self.CONFIG_FILE, 'w').close()
             except Exception as e:
                 context.log(f"Failed to create config file: {e}", error=True)
-                Properties.FAILED_ONCE = True
+                self.FAILED_ONCE = True
 
-        if not FAILED_ONCE:
-            self.parser.read(CONFIG_FILE)
+        if not self.FAILED_ONCE:
+            self.parser.read(self.CONFIG_FILE)
 
         if not self.parser.has_section(self.section):
-            self.parser.add_section(section)
+            self.parser.add_section(self.section)
             self.persist()
     
     def get(self, option:str, fallback=None) -> str:
@@ -44,8 +44,11 @@ class Properties:
             context.debug('Persisting property {self.section}.{option}={value}')
             self.persist()
     
-    def has(self, option:str) -> bool:
-        return self.parser.has_option(self.section, option)
+    def has(self, *options:str) -> bool:
+        for option in options:
+            if not self.parser.has_option(self.section, option):
+                return False
+        return True
 
     def set_if_missing(self, option:str, value:str, persist=True):
         if not self.has(option):
@@ -53,7 +56,7 @@ class Properties:
 
     def persist(self):
         try:
-            with open(CONFIG_FILE, mode='w') as fp:
+            with open(self.CONFIG_FILE, mode='w') as fp:
                 self.parser.write(fp)
         except Exception as e:
             context.log(f"Failed to persist properties: {e.__str__()}", error=True)
