@@ -26,7 +26,7 @@ def set_up():
         cli.override_property(name,key,secret,confirm)
 
 @commands.command(name='oauth2', help='Set up oauth2 credentials')
-@commmands.option('-s','--scopes', type=click.Choice(OAUTH2_SCOPES), help='Google API scopes to request for')
+@commmands.option('-s','--scopes', type=click.Choice(OAUTH2_SCOPES), help='Google API scopes to request authorization for',default=OAUTH2_SCOPES)
 def oauth2(scopes):
     # User authorizes this app
     consent_url = client.consent_url(scopes)
