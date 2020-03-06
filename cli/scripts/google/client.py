@@ -1,5 +1,6 @@
 from cli.scripts.google.properties import GoogleProperties
 import requests
+import re
 
 # TODO: Create one parent client under scripts package
 class Client():
@@ -47,6 +48,15 @@ class Client():
                 + f'&include_granted_scopes=true'\
                 + f'&prompt=consent'\
 
+    CODE_PATTERN = re.compile(r'.*code=(\d\/\w+)&.*')
+
+    def extract_code_from_url(self, url:str) -> str:
+        result = self.CODE_PATTERN.match(url)
+        if result and result.group(1):
+            return result.group(1)
+        else:
+            raise ClientException('Failed to extract code from url')
+
     def access_token(self, refresh:bool=False) -> str:
         response = requests.post(
             url=self.TOKEN_URL
@@ -60,7 +70,7 @@ class Client():
                 ,'grant_type':  'refresh_token'
                                 if refresh
                                 else 'authorization_code'
-                ,'redirect_uri': self.props.get(self.REDIRECT)
+                ,'redirect_uri': self.REDIRECT
             }
             ,timeout=self._timeout
         )
