@@ -1,7 +1,7 @@
 import test
 import unittest
 import os
-from cli.scripts.logging import LoggerUtil, LoggerProperties
+from cli.scripts.logger import LoggerUtil, LoggerProperties
 from logging import Logger
 
 class LoggerUtilTest(test.DeleteResourceTest):

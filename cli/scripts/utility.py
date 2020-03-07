@@ -1,6 +1,6 @@
 import click
 from cli.scripts.config import Properties
-import cli.scripts.logging as logcfg
+import cli.scripts.logger as logcfg
 
 class CLI():
 

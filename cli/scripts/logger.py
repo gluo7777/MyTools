@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timezone
-import logging
+import logging as logging_
 import os
 import sys
 from cli.scripts.config import Properties
@@ -46,20 +46,20 @@ class LoggerUtil:
             self._main.removeHandler(handler)
 
     @staticmethod
-    def setup_logger(name, log_dir, file, level=logging.DEBUG):
+    def setup_logger(name, log_dir, file, level=logging_.DEBUG):
         log_file = os.path.join(log_dir, file)
 
         if not os.path.exists(log_file):
             os.makedirs(log_dir, exist_ok=True)
             open(log_file, "w").close()
 
-        formatter = logging.Formatter(
+        formatter = logging_.Formatter(
             "%(asctime)s:%(levelname)s:%(message)s", datefmt="%m/%d/%Y %I:%M:%S %p %Z")
 
-        handler = logging.FileHandler(filename=log_file, encoding="utf-8")
+        handler = logging_.FileHandler(filename=log_file, encoding="utf-8")
         handler.setFormatter(formatter)
 
-        logger = logging.getLogger(name)
+        logger = logging_.getLogger(name)
         logger.setLevel(level)
         logger.addHandler(handler)
 

@@ -2,7 +2,7 @@ import unittest
 from cli.scripts.utility import CLI
 from unittest.mock import Mock,MagicMock,patch
 import click
-from cli.scripts.logging import LoggerUtil
+from cli.scripts.logger import LoggerUtil
 from cli.scripts.config import Properties
 
 class CLITest(unittest.TestCase):

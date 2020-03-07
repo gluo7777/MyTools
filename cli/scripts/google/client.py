@@ -1,9 +1,10 @@
 from cli.scripts.google.properties import GoogleProperties
 import requests
 import re
+import cli.scripts.client as client
 
 # TODO: Create one parent client under scripts package
-class Client():
+class Client(client.Client):
     OAUTH2 = 'https://oauth2.googleapis.com'
     ACCOUNTS = 'https://accounts.google.com'
     API = 'https://www.googleapis.com'
@@ -14,8 +15,7 @@ class Client():
     REDIRECT = 'https://www.google.com'
 
     def __init__(self, props: GoogleProperties):
-        self.props = props
-        self._timeout = int(self.props.get(self.props.TIMEOUT))
+        super().__init__(props)
 
     def _random_token(self):
         # TODO: make this random
@@ -55,7 +55,7 @@ class Client():
         if result and result.group(1):
             return result.group(1)
         else:
-            raise ClientException('Failed to extract code from url')
+            raise GoogleException('Failed to extract code from url')
 
     def access_token(self, refresh:bool=False) -> str:
         response = requests.post(
@@ -75,13 +75,13 @@ class Client():
             ,timeout=self._timeout
         )
         if response.ok:
-            body = response.json()
-            return {
-                'access_token': body.access_token
-                ,'refresh_token': body.refresh_token
-            }
+            with client.Json(response) as body:
+                return {
+                    'access_token': body.get('access_token')
+                    ,'refresh_token': body.get('refresh_token')
+                }
         else:
-            raise ClientException(f'\nstatus={response.status_code}\nmessage={response.text}')
+            raise GoogleException(f'\nstatus={response.status_code}\nmessage={response.text}')
 
     def revoke_access(self):
         response = requests.post(
@@ -90,14 +90,10 @@ class Client():
             ,query={'token': self.props.get(self.props.ACCESS_TOKEN)}
             ,timeout=self._timeout
         )
-        if not response.ok:
-            body = response.json()
-            raise ClientException(f'Failed to request access token: [{body.error}] {body.error_description}')
+        with client.Json(response) as body:
+            if not response.ok:
+                raise GoogleException(f"Failed to request access token:\n{body}")
 
-class ClientException(Exception):
-    def __init__(self,msg:str='Error calling Google Cloud Services',*args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
+class GoogleException(client.ClientException):
+    def __init__(self, msg='Error calling Google Services', *args, **kwargs):
+        super().__init__(msg=msg, *args, **kwargs)

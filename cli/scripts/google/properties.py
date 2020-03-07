@@ -9,8 +9,6 @@ class GoogleProperties(Properties):
     ACCESS_TOKEN = "access_token"
     REFRESH_TOKEN = "refresh_token"
     STATE_TOKEN = "state_token"
-    TIMEOUT = "client_timeout"
 
     def __init__(self):
         super().__init__(self.SECTION)
-        self.set_if_missing(self.TIMEOUT, '10')

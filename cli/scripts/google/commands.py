@@ -2,7 +2,7 @@ import click
 import cli.scripts.google.tasks.commands as tasks
 from cli.scripts.utility import CLI
 from cli.scripts.google.properties import GoogleProperties
-from cli.scripts.google.client import Client,ClientException
+from cli.scripts.google.client import Client
 
 props = GoogleProperties()
 cli = CLI(props)
