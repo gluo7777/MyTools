@@ -1,7 +1,11 @@
 import unittest
 import cli.scripts.exceptions as exceptions
+import test
 
-class ExceptionHandlerTest(unittest.TestCase):
+class ExceptionHandlerTest(test.DeleteResourceTest):
+
+    def setUp(self):
+        return super().setUp()
     
     def test_default_handler(self):
         @exceptions.exception_handler()
@@ -21,5 +25,6 @@ class ExceptionHandlerTest(unittest.TestCase):
             raise FileNotFoundError()
         some_function()
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    def tearDown(self):
+        exceptions.cli.logger.close()
+        return super().tearDown()

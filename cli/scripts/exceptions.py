@@ -1,8 +1,7 @@
 from typing import Callable
 from cli.scripts.utility import CLI
-from cli.scripts.config import Properties
 
-cli = CLI(Properties())
+cli = CLI()
 
 def __default_exception_handler(e: Exception):
     cli.debug(f"Not handling exception [{e.__str__()}]")

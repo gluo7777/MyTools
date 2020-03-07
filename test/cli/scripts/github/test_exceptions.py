@@ -1,7 +1,8 @@
 from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
 import unittest
+import test
 
-class GitHubErrorHandlerTest(unittest.TestCase):
+class GitHubErrorHandlerTest(test.DeleteResourceTest):
     
     def test_handler_built_correctly(self):
         handler = GitHubErrorHandler(lambda msg: msg).build()
@@ -16,6 +17,3 @@ class GitHubErrorHandlerTest(unittest.TestCase):
         handler = GitHubErrorHandler(out_cb).build()
         error = GitHubError(title='Error Title',errors=['error1','error2','error3'])
         output = handler(error)
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)

@@ -7,9 +7,10 @@ from cli.scripts.config import Properties
 
 class CLITest(unittest.TestCase):
 
-    @patch('cli.scripts.utility.LoggerUtil')
+    @patch('cli.scripts.utility.logcfg')
     @patch('cli.scripts.utility.Properties')
-    def setUp(self,props,logger):
+    def setUp(self,props,logcfg):
+        logcfg.logger = Mock(spec=LoggerUtil)
         super().setUp()
         self.cli = CLI()
         self.props = self.cli.props

@@ -11,7 +11,8 @@ print(f'RESOURCE_DIR={RESOURCE_DIR}')
 
 class DeleteResourceTest(unittest.TestCase):
     def setUp(self):
-        self.assertFalse(Path(RESOURCE_DIR).exists(),f"'{RESOURCE_DIR}' already exists")
+        if Path(RESOURCE_DIR).exists():
+            self.tearDown()
         os.makedirs(RESOURCE_DIR,exist_ok=False)
 
     def tearDown(self):

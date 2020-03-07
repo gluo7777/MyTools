@@ -1,13 +1,13 @@
 import click
 from cli.scripts.config import Properties
-from cli.scripts.logging import LoggerUtil
+import cli.scripts.logging as logcfg
 
 class CLI():
 
     def __init__(self, props: Properties = None):
         super().__init__()
         self.props = props if props is not None else Properties('General')
-        self.logger = LoggerUtil()
+        self.logger = logcfg.logger()
 
     def in_click_context(self):
         context = click.get_current_context(silent=True)
