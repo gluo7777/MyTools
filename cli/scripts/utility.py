@@ -9,20 +9,24 @@ class CLI():
         self.props = props if props is not None else Properties('General')
         self.logger = LoggerUtil()
 
+    def in_click_context(self):
+        context = click.get_current_context(silent=True)
+        return context is not None
+
     def is_debug(self):
         context = click.get_current_context(silent=True)
-        if context is None:
-            return False
-        return context.obj['VERBOSE'] or False
+        if self.in_click_context():
+            return context.obj['VERBOSE'] or False
+        return False
 
     def log(self, msg: str,stdout=True,file=True):
-        if stdout:
+        if stdout and self.in_click_context():
             click.echo(msg)
         if file:
             self.logger.info(msg)
     
     def error(self, msg: str,stderr=True,file=True):
-        if stderr:
+        if stderr and self.in_click_context():
             click.echo(msg, err=True)
         if file:
             self.logger.error(msg)
