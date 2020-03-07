@@ -5,10 +5,12 @@ import cli.scripts.context as context
 
 class Properties:
 
-    def __init__(self, section, CONFIG_DIR=os.path.expanduser('~/mytools'), CONFIG_FILE='config.ini'):
-        self.CONFIG_DIR = CONFIG_DIR
-        self.CONFIG_FILE = os.path.abspath(self.CONFIG_DIR + '/' + CONFIG_FILE)
-        self.FAILED_ONCE = False
+    CONFIG_DIR = os.path.expanduser('~/mytools')
+    CONFIG_FILE = 'config.ini'
+    FAILED_ONCE = False
+
+    def __init__(self, section):
+        self.CONFIG_FILE =  os.path.abspath(self.CONFIG_DIR + '/' + self.CONFIG_FILE)
         self._section = section
         self._parser = ConfigParser(
             allow_no_value=True,

@@ -1,14 +1,16 @@
 from cli.scripts.config import Properties
-import test
 import unittest
+import test
 import os
 from pathlib import Path
 from configparser import ExtendedInterpolation
 
-class PropertiesTest(unittest.TestCase):
+class PropertiesTest(test.DeleteResourceTest):
 
     def setUp(self):
-        self.props = Properties('Config',CONFIG_DIR=test.RESOURCE_DIR, CONFIG_FILE=f'propertiestest.ini')
+        super().setUp()
+        Properties.CONFIG_FILE = f'propertiestest.ini'
+        self.props = Properties('Config')
 
     def test_values(self):
         self.assertEqual(self.props.CONFIG_DIR, test.RESOURCE_DIR)
@@ -54,4 +56,4 @@ class PropertiesTest(unittest.TestCase):
             self.assertGreater(len(fp.readlines()),len(lines))
 
     def tearDown(self):
-        os.remove(self.props.CONFIG_FILE)
+        super().tearDown()

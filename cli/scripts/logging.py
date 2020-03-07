@@ -6,15 +6,15 @@ import sys
 from cli.scripts.config import Properties
 
 class LoggerProperties(Properties):
-    __DIR = 'directory'
-    __MAIN_FILE = 'logfile'
-    __ERROR_FILE = 'errorfile'
+    DIR = 'directory'
+    MAIN_FILE = 'log_file'
+    ERROR_FILE = 'error_file'
     
     def __init__(self):
         super().__init__('Logging')
-        self.set_if_missing(self.__DIR, os.path.abspath(self.CONFIG_DIR + '/logging'))
-        self.set_if_missing(self.__MAIN_FILE, 'main.log')
-        self.set_if_missing(self.__ERROR_FILE, 'error.log')
+        self.set_if_missing(self.DIR, os.path.abspath(self.CONFIG_DIR + '/logging'))
+        self.set_if_missing(self.MAIN_FILE, 'main.log')
+        self.set_if_missing(self.ERROR_FILE, 'error.log')
 
 class LoggerUtil:
     """
@@ -22,14 +22,23 @@ class LoggerUtil:
     """
 
     def __init__(self, props: LoggerProperties):
-        self._main = LoggerUtil.setup_logger("MAIN", self.props.get(self.props.__DIR), self.props.get(self.props.__MAIN_FILE))
-        self._error = ("ERROR", self.props.get(self.props.__DIR), self.props.get(self.props.__ERROR_FILE))
+        self.props = props
+        self._main = LoggerUtil.setup_logger("MAIN", self.props.get(self.props.DIR), self.props.get(self.props.MAIN_FILE))
+        self._error = LoggerUtil.setup_logger("ERROR", self.props.get(self.props.DIR), self.props.get(self.props.ERROR_FILE))
 
         self.log = self._main.log
         self.info = self._main.info
         self.debug = self._main.debug
         self.warning = self._error.warning
         self.error = self._error.error
+
+    def close(self):
+        for handler in self._error.handlers:
+            handler.close()
+            self._error.removeHandler(handler)
+        for handler in self._main.handlers:
+            handler.close()
+            self._main.removeHandler(handler)
 
     @staticmethod
     def setup_logger(name, log_dir, file, level=logging.DEBUG):
