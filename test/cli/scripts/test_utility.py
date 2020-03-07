@@ -14,7 +14,7 @@ class CLITest(unittest.TestCase):
         super().setUp()
         self.cli = CLI()
         self.props = self.cli.props
-        self.logger = self.cli.logger
+        self.logger = self.cli.logger_
 
     def test_in_click_context(self):
         click.get_current_context = Mock(return_value=object())

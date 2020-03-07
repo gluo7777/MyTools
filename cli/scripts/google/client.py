@@ -46,9 +46,9 @@ class Client(client.Client):
                 + f'&state={state_token}'\
                 + f'&scope={self._transform_scopes(scopes)}'\
                 + f'&include_granted_scopes=true'\
-                + f'&prompt=consent'\
+                + f'&prompt=consent'
 
-    CODE_PATTERN = re.compile(r'.*code=(\d\/\w+)&.*')
+    CODE_PATTERN = re.compile(r'.*code=(\d.+)&.*')
 
     def extract_code_from_url(self, url:str) -> str:
         result = self.CODE_PATTERN.match(url)

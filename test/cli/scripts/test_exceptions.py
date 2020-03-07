@@ -26,5 +26,5 @@ class ExceptionHandlerTest(test.DeleteResourceTest):
         some_function()
 
     def tearDown(self):
-        exceptions.cli.logger.close()
+        exceptions.cli.logger_.close()
         return super().tearDown()

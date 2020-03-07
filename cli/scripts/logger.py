@@ -12,7 +12,7 @@ class LoggerProperties(Properties):
     
     def __init__(self):
         super().__init__('Logging')
-        self.set_if_missing(self.DIR, os.path.abspath(self.CONFIG_DIR + '/logging'))
+        self.set_if_missing(self.DIR, os.path.abspath(super().CONFIG_DIR + '/logging'))
         self.set_if_missing(self.MAIN_FILE, 'main.log')
         self.set_if_missing(self.ERROR_FILE, 'error.log')
 
@@ -36,6 +36,9 @@ class LoggerUtil:
         self.debug = self._main.debug
         self.warning = self._error.warning
         self.error = self._error.error
+
+    def __del__(self):
+        self.close()
 
     def close(self):
         for handler in self._error.handlers:

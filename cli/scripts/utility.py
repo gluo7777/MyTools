@@ -7,7 +7,7 @@ class CLI():
     def __init__(self, props: Properties = None):
         super().__init__()
         self.props = props if props is not None else Properties('General')
-        self.logger = logcfg.logger()
+        self.logger_ = logcfg.logger()
 
     def in_click_context(self):
         context = click.get_current_context(silent=True)
@@ -23,13 +23,13 @@ class CLI():
         if stdout and self.in_click_context():
             click.echo(msg)
         if file:
-            self.logger.info(msg)
+            self.logger_.info(msg)
     
     def error(self, msg: str,stderr=True,file=True):
         if stderr and self.in_click_context():
             click.echo(msg, err=True)
         if file:
-            self.logger.error(msg)
+            self.logger_.error(msg)
 
     def debug(self, msg:str, stdout=True, file=True):
         if not self.is_debug():
@@ -37,7 +37,7 @@ class CLI():
         if stdout:
             click.echo(msg)
         if file:
-            self.logger.debug(msg)
+            self.logger_.debug(msg)
 
     def prompt_if_missing(self,name:str,option:str,sensitive:bool=False,confirm:bool=False):
         if not self.props.has(option):

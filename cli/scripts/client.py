@@ -31,5 +31,5 @@ class Json(object):
         except:
             return {}
 
-    def __exit__(self):
+    def __exit__(self, exception_type, exception_value, traceback):
         pass
