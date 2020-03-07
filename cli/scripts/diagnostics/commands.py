@@ -1,20 +1,20 @@
 import click
 import os,platform,sys
-from cli.scripts.context import is_debug
-import cli.scripts.context as global_context
+from cli.scripts.utility import CLI
 from cli.scripts.config import Properties
 
 props = Properties('Diagnostics')
+cli = CLI()
 
 @click.group(name="info")
 @click.pass_context
 def commands(context):
-    global_context.debug('Running info command')
+    cli.debug('Running info command')
 
 @commands.command()
 @click.pass_context
 def system(context):
-    global_context.debug("Obtaining system diagnostics...")
+    cli.debug("Obtaining system diagnostics...")
     path = os.path.abspath('.')
     ntpath = path
     posixpath = path

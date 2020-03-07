@@ -1,7 +1,6 @@
 import pip._vendor.requests as requests
 from cli.scripts.github.props import GitHubProperties
 from cli.scripts.github.exceptions import GitHubError
-import cli.scripts.context as global_context
 import json
 from typing import List,Tuple
 

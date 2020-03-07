@@ -1,20 +1,19 @@
 import click
-import cli.scripts.context as global_context
 from cli.scripts.github.props import GitHubProperties
 from cli.scripts.github.client import Client
 from cli.scripts.exceptions import exception_handler
 from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
 from cli.scripts.utility import CLI
 
+cli = CLI()
 props = GitHubProperties()
-cli = CLI(props)
 client = Client(props)
 error_handler = GitHubErrorHandler(GitHubErrorHandler.standard_error).build()
 
 @click.group(name="github")
 @exception_handler(target=GitHubError, handler=error_handler)
 def commands():
-    global_context.debug("Running github command...")
+    cli.debug("Running github command...")
     cli.prompt_if_missing('Username', GitHubProperties.USER)
     cli.prompt_if_missing('Access Token', GitHubProperties.ACCESS_TOKEN, sensitive=True)
     pass

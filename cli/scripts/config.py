@@ -1,13 +1,14 @@
 import os
 from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
-import cli.scripts.context as context
+from cli.scripts.utility import CLI
 
 class Properties:
 
     CONFIG_DIR = os.path.expanduser('~/mytools')
     CONFIG_FILE = 'config.ini'
     FAILED_ONCE = False
+    _CLI = CLI()
 
     def __init__(self, section):
         self.CONFIG_FILE =  os.path.abspath(self.CONFIG_DIR + '/' + self.CONFIG_FILE)
@@ -21,12 +22,12 @@ class Properties:
         )
 
         if not os.path.exists(self.CONFIG_FILE) and not self.FAILED_ONCE:
-            context.log(f"Creating config file at {self.CONFIG_FILE}")
+            cli.log(f"Creating config file at {self.CONFIG_FILE}")
             try:
                 os.makedirs(self.CONFIG_DIR,exist_ok=True)
                 open(self.CONFIG_FILE, 'w').close()
             except Exception as e:
-                context.log(f"Failed to create config file: {e}", error=True)
+                cli.log(f"Failed to create config file: {e}", error=True)
                 self.FAILED_ONCE = True
 
         if not self.FAILED_ONCE:
@@ -42,7 +43,7 @@ class Properties:
     def set(self, option:str, value:str, persist=True):
         self._parser.set(self._section,option,value)
         if persist:
-            context.debug('Persisting property {self._section}.{option}={value}')
+            cli.debug('Persisting property {self._section}.{option}={value}')
             self.persist()
     
     def has(self, *options:str) -> bool:
@@ -60,4 +61,4 @@ class Properties:
             with open(self.CONFIG_FILE, mode='w') as fp:
                 self._parser.write(fp)
         except Exception as e:
-            context.log(f"Failed to persist properties: {e.__str__()}", error=True)
+            cli.log(f"Failed to persist properties: {e.__str__()}", error=True)

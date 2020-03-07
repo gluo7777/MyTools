@@ -4,9 +4,9 @@ from cli.scripts.logging import LoggerUtil
 
 class CLI():
 
-    def __init__(self, props: Properties):
+    def __init__(self, props: Properties = None):
         super().__init__()
-        self.props = props
+        self.props = props if props is not None else Properties('General')
         self.logger = LoggerUtil()
 
     def is_debug(self):
