@@ -21,8 +21,8 @@ class LoggerUtil:
     Utility class that wraps around two custom loggers for general logging and error logging
     """
 
-    def __init__(self, props: LoggerProperties):
-        self.props = props
+    def __init__(self, props: LoggerProperties=None):
+        self.props = props if props is not None else LoggerProperties()
         self._main = LoggerUtil.setup_logger("MAIN", self.props.get(self.props.DIR), self.props.get(self.props.MAIN_FILE))
         self._error = LoggerUtil.setup_logger("ERROR", self.props.get(self.props.DIR), self.props.get(self.props.ERROR_FILE))
 

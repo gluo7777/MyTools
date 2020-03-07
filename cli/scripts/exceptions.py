@@ -1,8 +1,11 @@
 from typing import Callable
-import cli.scripts.context as global_context
+from cli.scripts.utility import CLI
+from cli.scripts.config import Properties
+
+cli = CLI(Properties())
 
 def __default_exception_handler(e: Exception):
-    global_context.debug(f"Not handling exception [{e.__str__()}]")
+    cli.debug(f"Not handling exception [{e.__str__()}]")
     raise e
 
 def exception_handler(target: Exception=Exception, handler:Callable[[Exception],None]=__default_exception_handler):
@@ -13,6 +16,7 @@ def exception_handler(target: Exception=Exception, handler:Callable[[Exception],
                 return func(*args,**kwargs)
             except Exception as e:
                 if type(e) == target:
+                    cli.debug(f"Handling exception [{e.__str__()}]")
                     handler(e)
                 else:
                     __default_exception_handler(e)
