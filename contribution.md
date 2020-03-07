@@ -10,5 +10,5 @@
 
 ```bash
 # Run all tests
-python -m unittest
+python -m unittest -v
 ```
