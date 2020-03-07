@@ -25,9 +25,21 @@ class LoggerUtilTest(test.DeleteResourceTest):
             handle_value = self.logger.__dict__[handle]
             self.assertIsNotNone(handle_value)
 
-    def test_log_files_created(self):
+    def test_main_log_file_created_when_info(self):
         self.logger.info('hello world')
         self.assertTrue(os.path.exists(os.path.abspath(LoggerProperties.CONFIG_DIR + '/logging' + '/main.log')))
+
+    def test_main_log_file_created_when_debug(self):
+        self.logger.debug('hello world')
+        self.assertTrue(os.path.exists(os.path.abspath(LoggerProperties.CONFIG_DIR + '/logging' + '/main.log')))
+
+    def test_error_log_file_created_when_error(self):
+        self.logger.error('hello world')
+        self.assertTrue(os.path.exists(os.path.abspath(LoggerProperties.CONFIG_DIR + '/logging' + '/error.log')))
+
+    def test_error_log_file_created_when_warning(self):
+        self.logger.warning('hello world')
+        self.assertTrue(os.path.exists(os.path.abspath(LoggerProperties.CONFIG_DIR + '/logging' + '/error.log')))
 
     def tearDown(self):
         self.logger.close()
