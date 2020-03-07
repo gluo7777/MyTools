@@ -53,3 +53,23 @@ class CLI():
             raise click.BadParameter('cannot be blank')
         else:
             return value
+
+    LEFT = 'left'
+    RIGHT = 'right'
+    CENTER = 'center'
+
+    def column_padding(self, columns, col_lens, orientation: str = LEFT, filler: str = ' ', sep: str = '|', border: bool = True):
+        line = []
+        assert len(columns) == len(col_lens)
+        for i in range(0, len(columns)):
+            pad_len = max(len(columns[i]),col_lens[i])
+            if orientation == self.LEFT:
+                line.append(columns[i].ljust(pad_len, filler))
+            elif orientation == self.RIGHT:
+                line.append(columns[i].rjust(pad_len, filler))
+            else:
+                line.append(columns[i].center(pad_len, filler))
+        if border:
+            line.insert(0,'')
+            line.append('')
+        return sep.join(line)

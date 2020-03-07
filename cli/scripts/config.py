@@ -36,7 +36,9 @@ class Properties:
     def get(self, option:str, fallback=None) -> str:
         return self._parser.get(self._section, option, fallback=fallback)
 
-    def set(self, option:str, value:str, persist=True):
+    def set(self, option:str, value, persist=True):
+        if type(value) in [int,bool,float]:
+            value = str(value)
         self._parser.set(self._section,option,value)
         if persist:
             self.persist()

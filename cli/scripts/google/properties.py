@@ -9,6 +9,7 @@ class GoogleProperties(Properties):
     ACCESS_TOKEN = "access_token"
     REFRESH_TOKEN = "refresh_token"
     STATE_TOKEN = "state_token"
+    EXPIRATION = "expiration"
 
     def __init__(self):
         super().__init__(self.SECTION)

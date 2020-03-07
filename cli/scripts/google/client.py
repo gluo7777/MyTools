@@ -2,6 +2,9 @@ from cli.scripts.google.properties import GoogleProperties
 import requests
 import re
 import cli.scripts.client as client
+from functools import wraps
+from cli.scripts.utility import CLI
+import time
 
 # TODO: Create one parent client under scripts package
 class Client(client.Client):
@@ -14,8 +17,9 @@ class Client(client.Client):
     CONTENT_TYPE = 'application/x-www-form-urlencoded'
     REDIRECT = 'https://www.google.com'
 
-    def __init__(self, props: GoogleProperties):
-        super().__init__(props)
+    def __init__(self, props: GoogleProperties, *args, **kwargs):
+        super().__init__(props, *args, **kwargs)
+        self.cli = CLI()
 
     def _random_token(self):
         # TODO: make this random
@@ -58,20 +62,21 @@ class Client(client.Client):
             raise GoogleException('Failed to extract code from url')
 
     def access_token(self, refresh:bool=False) -> str:
+        payload = {
+            'client_id': self.props.get(self.props.CLIENT_ID)
+            ,'client_secret': self.props.get(self.props.CLIENT_SECRET)
+            ,'redirect_uri': self.REDIRECT
+        }
+        if refresh:
+            payload['refresh_token'] = self.props.get(self.props.REFRESH_TOKEN) 
+            payload['grant_type'] = 'refresh_token'
+        else:
+            payload['code'] = self.props.get(self.props.AUTHORIZATION_CODE) 
+            payload['grant_type'] = 'authorization_code'
         response = requests.post(
             url=self.TOKEN_URL
             ,headers=self._application_x_www_form_urlencoded()
-            ,data={
-                'code': self.props.get(self.props.REFRESH_TOKEN) 
-                        if refresh
-                        else self.props.get(self.props.AUTHORIZATION_CODE)
-                ,'client_id': self.props.get(self.props.CLIENT_ID)
-                ,'client_secret': self.props.get(self.props.CLIENT_SECRET)
-                ,'grant_type':  'refresh_token'
-                                if refresh
-                                else 'authorization_code'
-                ,'redirect_uri': self.REDIRECT
-            }
+            ,data=payload
             ,timeout=self._timeout
         )
         if response.ok:
@@ -79,9 +84,14 @@ class Client(client.Client):
                 return {
                     'access_token': body.get('access_token')
                     ,'refresh_token': body.get('refresh_token')
+                    ,'expiration': body.get('expires_in')
                 }
         else:
             raise GoogleException(f'\nstatus={response.status_code}\nmessage={response.text}')
+
+    def set_expiration_ts(self, seconds: int):
+        now = round(time.time())
+        self.props.set(self.props.EXPIRATION, now + seconds)
 
     def revoke_access(self):
         response = requests.post(
@@ -97,3 +107,25 @@ class Client(client.Client):
 class GoogleException(client.ClientException):
     def __init__(self, msg='Error calling Google Services', *args, **kwargs):
         super().__init__(msg=msg, *args, **kwargs)
+
+def refresh_token(minutes:int=15):
+    seconds = minutes * 60
+    def cast(obj) -> Client:
+        return obj
+    def decorator(func):
+        @wraps(func)
+        def wrapped_func(*args,**kwargs):
+            self = cast(args[0])
+            remaining_seconds = int(self.props.get(self.props.EXPIRATION, '0')) - time.time()
+            if remaining_seconds < seconds:
+                self.cli.log('Refreshing Google access token')
+                response = self.access_token(refresh=True)
+                access_token = response.get(self.props.ACCESS_TOKEN)
+                if not access_token:
+                    raise GoogleException('Error in attempt to refresh access token')
+                self.props.set(self.props.ACCESS_TOKEN,access_token)
+                self.set_expiration_ts(response.get(self.props.EXPIRATION))
+            return func(*args,**kwargs)
+        return wrapped_func
+    return decorator
+

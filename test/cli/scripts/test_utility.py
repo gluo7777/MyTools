@@ -71,5 +71,32 @@ class CLITest(unittest.TestCase):
         with self.assertRaises(click.BadParameter):
             self.cli.not_blank(None,None,'')
 
+    def test_column_padding(self):
+        # left
+        cols = ['id','title','author']
+        lens = [5,10,10]
+        self.assertEqual(
+            self.cli.column_padding(cols,lens)
+            ,'|id   |title     |author    |'
+        )
+        # right
+        lens = [5,10,10]
+        self.assertEqual(
+            self.cli.column_padding(cols,lens,orientation=CLI.RIGHT)
+            ,'|   id|     title|    author|'
+        )
+        # center
+        lens = [5,10,10]
+        self.assertEqual(
+            self.cli.column_padding(cols,lens,orientation=CLI.CENTER)
+            ,'|  id |  title   |  author  |'
+        )
+        # under length
+        lens = [0,0,0]
+        self.assertEqual(
+            self.cli.column_padding(cols,lens,orientation=CLI.LEFT)
+            ,'|id|title|author|'
+        )
+
     def tearDown(self):
         super().tearDown()

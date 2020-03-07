@@ -6,11 +6,15 @@ class Client:
     TIMEOUT = 'timeout'
     DEFAULT_TIMEOUT = 10
 
-    def __init__(self, props: Properties):
+    def __init__(self, props: Properties, base:str=''):
         super().__init__()
         self.props = props
+        self.base = base
         self.props.set_if_missing(self.TIMEOUT, str(self.DEFAULT_TIMEOUT))
         self._timeout = int(self.props.get(self.TIMEOUT))
+
+    def _path(self,*paths: str) -> str:
+        return self.base + "/" + "/".join(paths)
 
 class ClientException(Exception):
     def __init__(self,msg:str='Error calling API',*args, **kwargs):

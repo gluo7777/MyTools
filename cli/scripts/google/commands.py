@@ -41,3 +41,10 @@ def oauth2(scopes):
     response = client.access_token()
     props.set(props.ACCESS_TOKEN, response[props.ACCESS_TOKEN])
     props.set(props.REFRESH_TOKEN, response[props.REFRESH_TOKEN])
+    client.set_expiration_ts(response[props.EXPIRATION])
+
+@commands.command(name='revoke', help='Revoke oauth2 credentials')
+def revoke():
+    choice = click.prompt('Are you sure you want to remove your credentials?',type=click.Choice(['yes','no']), default='no', show_choices=True, show_default=False)
+    if choice == 'yes':
+        client.revoke_access()
