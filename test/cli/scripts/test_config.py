@@ -36,5 +36,22 @@ class PropertiesTest(unittest.TestCase):
         self.assertTrue(self.props.has(key))
         self.assertEqual(self.props.get(key), val2)
 
+    def test_set_if_missing(self):
+        self.props.set('prop','abc')
+        self.props.set_if_missing('prop','def')
+        self.assertEqual(self.props.get('prop'),'abc')
+
+    def test_persist(self):
+        with open(self.props.CONFIG_FILE, mode='r') as fp:
+            lines = fp.readlines()
+        # no persist
+        self.props.set('prop','abc',False)
+        with open(self.props.CONFIG_FILE, mode='r') as fp:
+            self.assertListEqual(lines, fp.readlines())
+        # manually persist
+        self.props.persist()
+        with open(self.props.CONFIG_FILE, mode='r') as fp:
+            self.assertGreater(len(fp.readlines()),len(lines))
+
     def tearDown(self):
         os.remove(self.props.CONFIG_FILE)
