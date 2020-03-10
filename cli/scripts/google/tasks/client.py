@@ -5,20 +5,23 @@ import requests
 
 class Client(GoogleClient):
 
-    BASE = GoogleClient.API + '/tasks/v1'
-    ME = ['users','@me']
     MAX = 10
 
-    def __init__(self, props: TaskProperties):
-        super().__init__(props)
+    def __init__(self, props: TaskProperties, paths:[str]=[]):
+        paths_ = ['tasks','v1']
+        paths_.extend(paths)
+        super().__init__(props,paths=paths_)
+
+    def _rel_to_cur_user(self, *paths: str) -> [str]:
+        return super()._path('users','@me',*paths)
 
     @refresh_token()
     def get_task_lists(self):
         page_token = ''
         while page_token is not None:
             response = requests.get(
-                url=self._path(self.ME,'lists')
-                ,query={'maxResults':self.MAX,'pageToken':page_token}
+                url=self._rel_to_cur_user('lists')
+                ,params={'maxResults':self.MAX,'pageToken':page_token}
                 ,headers=self._authorization_header()
                 ,timeout=self._timeout
             )

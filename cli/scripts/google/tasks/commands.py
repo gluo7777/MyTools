@@ -11,15 +11,25 @@ cli = CLI(props)
 def commands():
     pass
 
-# TODO: add column padding
 def _task_list_titles(*args,**kwargs):
     """
-    index | title | id | last updated
+    # | title |  last updated | id |
     """
+    lens = [4,20,30,60]
     i = 0
-    yield 'Title'
+    yield cli.column_padding(['#','Title','Last Updated','Id'],lens,orientation=CLI.CENTER) + '\n'
     for task_list in client.get_task_lists(*args,**kwargs):
-        yield task_list['title']
+        i += 1
+        yield cli.column_padding(
+            [
+                i
+                ,task_list.get('title')
+                ,task_list.get('updated')
+                ,task_list.get('id')
+            ]
+            ,lens
+            ,orientation=CLI.CENTER
+        ) + '\n'
 
 @commands.command(name='list', help='Show task lists')
 def task_list():

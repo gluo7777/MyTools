@@ -97,6 +97,15 @@ class CLITest(unittest.TestCase):
             self.cli.column_padding(cols,lens,orientation=CLI.LEFT)
             ,'|id|title|author|'
         )
+        # int
+        # under length
+        lens = [0,0,0]
+        cols.pop(0)
+        cols.insert(0,1)
+        self.assertEqual(
+            self.cli.column_padding(cols,lens,orientation=CLI.LEFT)
+            ,'|1|title|author|'
+        )
 
     def tearDown(self):
         super().tearDown()

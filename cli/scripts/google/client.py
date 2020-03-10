@@ -17,8 +17,9 @@ class Client(client.Client):
     CONTENT_TYPE = 'application/x-www-form-urlencoded'
     REDIRECT = 'https://www.google.com'
 
-    def __init__(self, props: GoogleProperties, *args, **kwargs):
-        super().__init__(props, *args, **kwargs)
+    def __init__(self, props: GoogleProperties,paths:[str]=[], *args, **kwargs):
+        super().__init__(props, base=Client.API, *args, **kwargs)
+        self.base = super()._path(*paths)
         self.cli = CLI()
 
     def _random_token(self):

@@ -62,13 +62,14 @@ class CLI():
         line = []
         assert len(columns) == len(col_lens)
         for i in range(0, len(columns)):
-            pad_len = max(len(columns[i]),col_lens[i])
+            text = str(columns[i])
+            pad_len = max(len(text),col_lens[i])
             if orientation == self.LEFT:
-                line.append(columns[i].ljust(pad_len, filler))
+                line.append(text.ljust(pad_len, filler))
             elif orientation == self.RIGHT:
-                line.append(columns[i].rjust(pad_len, filler))
+                line.append(text.rjust(pad_len, filler))
             else:
-                line.append(columns[i].center(pad_len, filler))
+                line.append(text.center(pad_len, filler))
         if border:
             line.insert(0,'')
             line.append('')
