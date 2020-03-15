@@ -4,6 +4,7 @@ import sys
 import platform
 import cli.scripts.diagnostics.commands as diagnostics
 import cli.scripts.github.commands as github
+import cli.scripts.google.commands as google
 
 @click.group()
 @click.option('--verbose', is_flag=True, default=False, help="Log extravaneous output")
@@ -22,6 +23,7 @@ def cli(context, verbose):
 def entry():
     cli.add_command(diagnostics.commands)
     cli.add_command(github.commands)
+    cli.add_command(google.commands)
     cli()
 
 if __name__ == "__main__":

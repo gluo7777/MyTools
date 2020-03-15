@@ -1,9 +1,11 @@
 from cli.scripts.github.props import GitHubProperties
 import unittest
+import test
 
-class GitHubPropertiesTest(unittest.TestCase):
+class GitHubPropertiesTest(test.DeleteResourceTest):
 
     def setUp(self):
+        super().setUp()
         self.props = GitHubProperties()
 
     def test_default_props(self):
@@ -15,6 +17,3 @@ class GitHubPropertiesTest(unittest.TestCase):
     def test_set_option(self):
         self.props.set(GitHubProperties.TIMEOUT, '10')
         self.assertTrue(self.props.has(GitHubProperties.TIMEOUT))
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)

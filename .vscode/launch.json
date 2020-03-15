@@ -5,6 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "MyTools: Google Task Lists",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/cli/scripts/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--verbose",
+                "google",
+                "tasks",
+                "list"
+            ]
+        },
+        {
+            "name": "MyTools: Google Setup OAuth2",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/cli/scripts/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--verbose",
+                "google",
+                "oauth2",
+                "--scopes tasks"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
