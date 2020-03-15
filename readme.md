@@ -11,12 +11,27 @@ A command line utility that accomplishes various things
 - Diagnostics `mytool info`
     1. print information about system such as OS
 
+## Upgrade Python
+
+### Windows 10
+
+https://stackoverflow.com/questions/45137395/how-do-i-upgrade-the-python-installation-in-windows-10
+
+```powershell
+iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+refreshenv
+choco upgrade python -y
+py -m pip install --upgrade pip
+alias pip="py -m pip"
+```
+
 ## Development
 
 1. Version > Python 3.8.1
 2. Create setup.py if missing
 3. Initialize virtualenv
-    > virtualenv env
+    > virtualenv venv
     > ./venv/Scripts/activate
 4. Create script executables
     > pip install --editable .
