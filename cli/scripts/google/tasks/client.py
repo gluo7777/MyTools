@@ -29,3 +29,24 @@ class Client(GoogleClient):
                 page_token = body.get('nextPageToken')
                 for item in body.get('items', []):
                     yield item
+
+    def all_task_lists(self):
+        return list(self.get_task_lists())
+
+    @refresh_token
+    def get_tasks(self, title:str):
+        task_lists = self.all_task_lists()
+        title_filter = lambda item: item.get('title','').replace(' ','') == title
+        task_lists = list(filter(title_filter, task_lists))
+        task_list = task_lists[0] if len(task_lists) > 0 else {}
+        task_list_id = task_list.get('id')
+
+        response = requests.get(
+            url=self._path('lists',task_list_id,'tasks')
+            ,headers=self._authorization_header()
+            ,timeout=self._timeout
+        )
+
+        with Json(response) as body:
+            for item in body.get('items', []):
+                yield item
