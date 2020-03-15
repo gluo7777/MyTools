@@ -33,7 +33,7 @@ class Client(GoogleClient):
     def all_task_lists(self):
         return list(self.get_task_lists())
 
-    @refresh_token
+    @refresh_token()
     def get_tasks(self, title:str):
         task_lists = self.all_task_lists()
         title_filter = lambda item: item.get('title','').replace(' ','') == title
