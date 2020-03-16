@@ -43,6 +43,15 @@ class CLI():
         if not self.props.has(option):
             value = click.prompt(f"{name} is not set. Please enter {name}",hide_input=sensitive,confirmation_prompt=confirm)
             self.props.set(option, value)
+    
+    def process_optional(self,name:str,option:str,obj=None,override:bool=True):
+        value = self.props.get(option) if obj is None else obj
+        if value is None:
+            raise Exception(f"Value of '{name}' was not passed and was found in '{self.props.CONFIG_FILE}' file")
+        else:
+            if override:
+                self.props.set(option,value)
+        return value
 
     def override_property(self, name:str, option:str,sensitive:bool=False,confirm:bool=False):
         value = click.prompt(f"Please enter {name}",hide_input=sensitive,confirmation_prompt=confirm)

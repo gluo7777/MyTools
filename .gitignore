@@ -5,3 +5,4 @@ jsonsamples/
 dist/
 *.code-workspace
 build/
+youtube/**

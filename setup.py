@@ -15,8 +15,9 @@ setup(
     include_package_data=True,
     install_requires=[
         'Click'
-        ,'colorama',
-        'requests'
+        ,'colorama'
+        ,'requests'
+        ,'youtube-dl'
     ],
     entry_points='''
         [console_scripts]

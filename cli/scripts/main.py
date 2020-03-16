@@ -2,9 +2,10 @@ import click
 import os
 import sys
 import platform
-import cli.scripts.diagnostics.commands as diagnostics
-import cli.scripts.github.commands as github
-import cli.scripts.google.commands as google
+from cli.scripts.diagnostics.commands import commands as diagnostics
+from cli.scripts.github.commands import commands as github
+from cli.scripts.google.commands import commands as google
+from cli.scripts.video.commands import commands as video
 
 @click.group()
 @click.option('--verbose', is_flag=True, default=False, help="Log extravaneous output")
@@ -21,9 +22,10 @@ def cli(context, verbose):
         return 1
 
 def entry():
-    cli.add_command(diagnostics.commands)
-    cli.add_command(github.commands)
-    cli.add_command(google.commands)
+    cli.add_command(diagnostics)
+    cli.add_command(github)
+    cli.add_command(google)
+    cli.add_command(video)
     cli()
 
 if __name__ == "__main__":
