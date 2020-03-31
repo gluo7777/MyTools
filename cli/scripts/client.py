@@ -6,10 +6,10 @@ class Client:
     TIMEOUT = 'timeout'
     DEFAULT_TIMEOUT = 10
 
-    def __init__(self, props: Properties, base:str=''):
+    def __init__(self, props: Properties):
         super().__init__()
         self.props = props
-        self.base = base
+        self.base = 'http://localhost'
         self.props.set_if_missing(self.TIMEOUT, str(self.DEFAULT_TIMEOUT))
         self._timeout = int(self.props.get(self.TIMEOUT))
 

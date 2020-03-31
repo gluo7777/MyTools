@@ -55,6 +55,6 @@ def task_list():
     click.echo_via_pager(_task_list_titles())
 
 @commands.command(name='get', help='Get 0 or more tasks')
-@click.argument('list title')
-def get_tasks(list_title:str):
-    click.echo(_task_titles(list_title))
+@click.argument('title')
+def get_tasks(title:str):
+    click.echo_via_pager(_task_titles(title))

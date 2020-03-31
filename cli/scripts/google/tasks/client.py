@@ -7,20 +7,17 @@ class Client(GoogleClient):
 
     MAX = 10
 
-    def __init__(self, props: TaskProperties, paths:[str]=[]):
-        paths_ = ['tasks','v1']
-        paths_.extend(paths)
-        super().__init__(props,paths=paths_)
-
-    def _rel_to_cur_user(self, *paths: str) -> [str]:
-        return super()._path('users','@me',*paths)
+    def __init__(self, props: TaskProperties):
+        super().__init__(props)
+        self.base = GoogleClient.API
+        self.base = self._path('tasks','v1')
 
     @refresh_token()
     def get_task_lists(self):
         page_token = ''
         while page_token is not None:
             response = requests.get(
-                url=self._rel_to_cur_user('lists')
+                url=self._path('users','@me','lists')
                 ,params={'maxResults':self.MAX,'pageToken':page_token}
                 ,headers=self._authorization_header()
                 ,timeout=self._timeout
@@ -36,10 +33,12 @@ class Client(GoogleClient):
     @refresh_token()
     def get_tasks(self, title:str):
         task_lists = self.all_task_lists()
-        title_filter = lambda item: item.get('title','').replace(' ','') == title
+        title_filter = lambda item: item.get('title','').replace(' ','').lower() == title
         task_lists = list(filter(title_filter, task_lists))
         task_list = task_lists[0] if len(task_lists) > 0 else {}
         task_list_id = task_list.get('id')
+        if task_list_id is None:
+            raise Exception(f'No task list called {title}')
 
         response = requests.get(
             url=self._path('lists',task_list_id,'tasks')
