@@ -2,6 +2,7 @@ import click
 from cli.scripts.google.tasks.client import Client
 from cli.scripts.google.tasks.properties import TaskProperties
 from cli.scripts.utility import CLI
+from cli.scripts.exceptions import exception_handler
 
 props = TaskProperties()
 client = Client(props)
@@ -51,10 +52,12 @@ def _task_titles(*args,**kwargs):
         ) + '\n'
 
 @commands.command(name='list', help='Show task lists')
+@exception_handler()
 def task_list():
     click.echo_via_pager(_task_list_titles())
 
 @commands.command(name='get', help='Get 0 or more tasks')
 @click.argument('title')
+@exception_handler()
 def get_tasks(title:str):
     click.echo_via_pager(_task_titles(title))

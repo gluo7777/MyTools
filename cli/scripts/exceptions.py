@@ -4,8 +4,7 @@ from cli.scripts.utility import CLI
 cli = CLI()
 
 def __default_exception_handler(e: Exception):
-    cli.debug(f"Not handling exception [{e.__str__()}]")
-    raise e
+    cli.error(f"{e.__str__()}")
 
 def exception_handler(target: Exception=Exception, handler:Callable[[Exception],None]=__default_exception_handler):
     assert callable(handler)
