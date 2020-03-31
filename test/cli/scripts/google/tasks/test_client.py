@@ -15,15 +15,3 @@ class ClientTest(test.DeleteResourceTest):
             'https://www.googleapis.com/tasks/v1'
             ,self.client.base
         )
-    
-    def test__rel_to_cur_user(self):
-        self.assertEqual(
-            'https://www.googleapis.com/tasks/v1/users/@me/tasks'
-            ,self.client._rel_to_cur_user('tasks')
-        )
-
-    def test__rel_to_cur_user_multiple(self):
-        self.assertEqual(
-            'https://www.googleapis.com/tasks/v1/users/@me/tasks/12345/title'
-            ,self.client._rel_to_cur_user('tasks','12345','title')
-        )
