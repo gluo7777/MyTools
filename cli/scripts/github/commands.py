@@ -5,8 +5,8 @@ from cli.scripts.exceptions import exception_handler
 from cli.scripts.github.exceptions import GitHubError,GitHubErrorHandler
 from cli.scripts.utility import CLI
 
-cli = CLI()
 props = GitHubProperties()
+cli = CLI(props)
 client = Client(props)
 error_handler = GitHubErrorHandler(GitHubErrorHandler.standard_error).build()
 
