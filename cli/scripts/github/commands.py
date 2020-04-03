@@ -74,9 +74,9 @@ def create_repo(name: str, description: str, private: bool):
         if not check_git_exec():
             click.echo('Git is not installed', err=True)
             return
-        file = os.path.abspath('.') + '/' + '.gitignore'
-        if not os.path.exists(file):
-            click.echo('No .gitignore in this directory', err=True)
+        gitignore = os.path.abspath('.') + '/' + '.gitignore'
+        if not os.path.exists(gitignore):
+            click.echo('No .gitignore in current directory', err=True)
             return
         click.echo('initializing local repo and committing files')
         sp.run(['git','init','.'])
