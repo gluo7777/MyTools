@@ -78,10 +78,11 @@ def create_repo(name: str, description: str, private: bool):
         if not os.path.exists(file):
             click.echo('No .gitignore in this directory', err=True)
             return
-        click.echo('initializing local repo and committing files')
-        sp.run(['git','init','.'])
-        sp.run(['git','add','.'])
-        sp.run(['git','commit','-m','First Commit'])
+        if not os.path.exists(os.path.abspath('.') + '/' + '.git'):
+            click.echo('initializing local repo and committing files')
+            sp.run(['git','init','.'])
+            sp.run(['git','add','.'])
+            sp.run(['git','commit','-m','First Commit'])
         click.echo('adding remote origin')
         sp.run(['git', 'remote', 'add', 'origin',response['ssh']])
         click.echo('uploading to upstream')
