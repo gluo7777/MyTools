@@ -44,8 +44,8 @@ def check_git_exec():
 
 @repo.command(name='list')
 @click.option('-c', '--count', is_flag=True, type=int, help="Print number of repositories", default=False)
-@click.option('-s', '--sort', type=click.Choice(['created', 'updated', 'pushed', 'full_name'], case_sensitive=False))
-@click.option('-d', '--direction', type=click.Choice(['asc', 'desc'], case_sensitive=False))
+@click.option('-s', '--sort', type=click.Choice(['created', 'updated', 'pushed', 'full_name'], case_sensitive=False))  # pylint: disable=unexpected-keyword-arg
+@click.option('-d', '--direction', type=click.Choice(['asc', 'desc'], case_sensitive=False))  # pylint: disable=unexpected-keyword-arg
 @exception_handler(target=GitHubError, handler=error_handler)
 def list_repos(count, sort, direction):
     if count:
@@ -54,6 +54,7 @@ def list_repos(count, sort, direction):
     else:
         click.clear()
         click.echo_via_pager(get_pretty_printed_repos(sort, direction))
+
 
 @repo.command(name='create')
 @click.option('-n', 'name', prompt=True, type=str, callback=cli.not_blank)
@@ -80,20 +81,21 @@ def create_repo(name: str, description: str, private: bool):
             return
         if not os.path.exists(os.path.abspath('.') + '/' + '.git'):
             click.echo('initializing local repo and committing files')
-            sp.run(['git','init','.'])
-            sp.run(['git','add','.'])
-            sp.run(['git','commit','-m','First Commit'])
+            sp.run(['git', 'init', '.'])
+            sp.run(['git', 'add', '.'])
+            sp.run(['git', 'commit', '-m', 'First Commit'])
         click.echo('adding remote origin')
-        sp.run(['git', 'remote', 'add', 'origin',response['ssh']])
+        sp.run(['git', 'remote', 'add', 'origin', response['ssh']])
         click.echo('uploading to upstream')
-        sp.run(['git','push','-u','origin','master'])
+        sp.run(['git', 'push', '-u', 'origin', 'master'])
+
 
 @repo.command(name='delete')
 @click.option('-n', '--name', prompt=True, type=str, callback=cli.not_blank, confirmation_prompt=True)
 @exception_handler(target=GitHubError, handler=error_handler)
 def delete_repo(name: str):
     click.echo(f"Deleting repository {name}...")
-    response = client.delete_repository(name)
+    client.delete_repository(name)
     click.echo(f"Successfully deleted {name}")
 
 

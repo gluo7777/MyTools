@@ -26,6 +26,7 @@ def entry():
     cli.add_command(github)
     cli.add_command(google)
     cli.add_command(video)
+    # pylint: disable=no-value-for-parameter
     cli()
 
 if __name__ == "__main__":

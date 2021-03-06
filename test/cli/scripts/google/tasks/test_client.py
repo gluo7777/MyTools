@@ -3,6 +3,7 @@ from cli.scripts.google.tasks.client import Client
 from cli.scripts.google.tasks.properties import TaskProperties
 import unittest.mock as mock
 
+
 class ClientTest(test.DeleteResourceTest):
 
     def setUp(self):
@@ -12,6 +13,5 @@ class ClientTest(test.DeleteResourceTest):
 
     def test_base_url(self):
         self.assertEqual(
-            'https://www.googleapis.com/tasks/v1'
-            ,self.client.base
+            'https://www.googleapis.com/tasks/v1', self.client.base
         )

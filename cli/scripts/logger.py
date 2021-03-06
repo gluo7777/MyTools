@@ -5,16 +5,19 @@ import os
 import sys
 from cli.scripts.config import Properties
 
+
 class LoggerProperties(Properties):
     DIR = 'directory'
     MAIN_FILE = 'log_file'
     ERROR_FILE = 'error_file'
-    
+
     def __init__(self):
         super().__init__('Logging')
-        self.set_if_missing(self.DIR, os.path.abspath(super().CONFIG_DIR + '/logging'))
+        self.set_if_missing(self.DIR, os.path.abspath(
+            super().CONFIG_DIR + '/logging'))
         self.set_if_missing(self.MAIN_FILE, 'main.log')
         self.set_if_missing(self.ERROR_FILE, 'error.log')
+
 
 class LoggerUtil:
     """
@@ -23,13 +26,15 @@ class LoggerUtil:
 
     _INSTANCES = 0
 
-    def __init__(self, props: LoggerProperties=None):
+    def __init__(self, props: LoggerProperties = None):
         if self._INSTANCES > 0:
             raise Exception('LoggerUtil instance already configured')
         self._INSTANCES += 1
         self.props = props if props is not None else LoggerProperties()
-        self._main = LoggerUtil.setup_logger("MAIN", self.props.get(self.props.DIR), self.props.get(self.props.MAIN_FILE))
-        self._error = LoggerUtil.setup_logger("ERROR", self.props.get(self.props.DIR), self.props.get(self.props.ERROR_FILE))
+        self._main = LoggerUtil.setup_logger("MAIN", self.props.get(
+            self.props.DIR), self.props.get(self.props.MAIN_FILE))
+        self._error = LoggerUtil.setup_logger("ERROR", self.props.get(
+            self.props.DIR), self.props.get(self.props.ERROR_FILE))
 
         self.log = self._main.log
         self.info = self._main.info
@@ -68,7 +73,9 @@ class LoggerUtil:
 
         return logger
 
+
 _logger = LoggerUtil()
+
 
 def logger():
     return _logger

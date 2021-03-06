@@ -3,11 +3,13 @@ from typing import Callable
 import click
 import unittest
 
+
 class GitHubError(Exception):
-    def __init__(self, title:str='Error calling GitHub API', errors:List[str]=[], *args, **kwargs):
+    def __init__(self, title: str = 'Error calling GitHub API', errors: List[str] = [], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title = title
         self.errors = errors
+
 
 class GitHubErrorHandler():
     def __init__(self, out_cb: Callable):

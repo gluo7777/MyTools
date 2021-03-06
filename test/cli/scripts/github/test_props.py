@@ -2,6 +2,7 @@ from cli.scripts.github.props import GitHubProperties
 import unittest
 import test
 
+
 class GitHubPropertiesTest(test.DeleteResourceTest):
 
     def setUp(self):
@@ -11,7 +12,8 @@ class GitHubPropertiesTest(test.DeleteResourceTest):
     def test_default_props(self):
         self.assertIsNotNone(self.props.get(GitHubProperties.API_URL))
         self.assertIsNotNone(self.props.get(GitHubProperties.HEADER_ACCEPT))
-        self.assertIsNotNone(self.props.get(GitHubProperties.HEADER_CONTENT_TYPE))
+        self.assertIsNotNone(self.props.get(
+            GitHubProperties.HEADER_CONTENT_TYPE))
         self.assertGreater(int(self.props.get(GitHubProperties.TIMEOUT)), 0)
 
     def test_set_option(self):

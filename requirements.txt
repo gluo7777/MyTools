@@ -1,12 +1,22 @@
 --index-url https://pypi.org/simple
 --constraint constraints.txt
+astroid==2.5.1
 build==0.3.0
+certifi==2020.12.5
+chardet==4.0.0
+click==7.1.2
+colorama==0.4.4
+idna==2.10
+isort==5.7.0
+lazy-object-proxy==1.5.2
+mccabe==0.6.1
 packaging==20.9
 pep517==0.9.1
-pyparsing==2.4.7
-toml==0.10.2
-click==7.1.2
-requests==2.25.1
-youtube-dl==2021.3.3
-colorama==0.4.4
 pylint==2.7.2
+pyparsing==2.4.7
+requests==2.25.1
+toml==0.10.2
+urllib3==1.26.3
+wrapt==1.12.1
+youtube-dl==2021.3.3
+wheel==0.36.2

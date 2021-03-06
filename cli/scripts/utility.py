@@ -2,6 +2,7 @@ import click
 from cli.scripts.config import Properties
 import cli.scripts.logger as logcfg
 
+
 class CLI():
 
     def __init__(self, props: Properties = None):
@@ -19,19 +20,19 @@ class CLI():
             return context.obj['VERBOSE'] or False
         return False
 
-    def log(self, msg: str,stdout=True,file=True):
+    def log(self, msg: str, stdout=True, file=True):
         if stdout and self.in_click_context():
             click.echo(msg)
         if file:
             self.logger_.info(msg)
-    
-    def error(self, msg: str,stderr=True,file=True):
+
+    def error(self, msg: str, stderr=True, file=True):
         if stderr and self.in_click_context():
             click.echo(msg, err=True)
         if file:
             self.logger_.error(msg)
 
-    def debug(self, msg:str, stdout=True, file=True):
+    def debug(self, msg: str, stdout=True, file=True):
         if not self.is_debug():
             return
         if stdout:
@@ -39,23 +40,26 @@ class CLI():
         if file:
             self.logger_.debug(msg)
 
-    def prompt_if_missing(self,name:str,option:str,sensitive:bool=False,confirm:bool=False):
+    def prompt_if_missing(self, name: str, option: str, sensitive: bool = False, confirm: bool = False):
         if not self.props.has(option):
-            value = click.prompt(f"{name} is not set. Please enter {name}",hide_input=sensitive,confirmation_prompt=confirm)
+            value = click.prompt(f"{name} is not set. Please enter {name}",
+                                 hide_input=sensitive, confirmation_prompt=confirm)
             self.props.set(option, value)
-    
-    def process_optional(self,name:str,option:str,obj=None,override:bool=True):
+
+    def process_optional(self, name: str, option: str, obj=None, override: bool = True):
         value = self.props.get(option) if obj is None else obj
         if value is None:
-            raise Exception(f"Value of '{name}' was not passed and was found in '{self.props.CONFIG_FILE}' file")
+            raise Exception(
+                f"Value of '{name}' was not passed and was found in '{self.props.CONFIG_FILE}' file")
         else:
             if override:
-                self.props.set(option,value)
+                self.props.set(option, value)
         return value
 
-    def override_property(self, name:str, option:str,sensitive:bool=False,confirm:bool=False):
-        value = click.prompt(f"Please enter {name}",hide_input=sensitive,confirmation_prompt=confirm)
-        self.props.set(option,value)
+    def override_property(self, name: str, option: str, sensitive: bool = False, confirm: bool = False):
+        value = click.prompt(
+            f"Please enter {name}", hide_input=sensitive, confirmation_prompt=confirm)
+        self.props.set(option, value)
 
     def not_blank(self, ctx, param, value):
         if value is None or value == '':
@@ -72,7 +76,7 @@ class CLI():
         assert len(columns) == len(col_lens)
         for i in range(0, len(columns)):
             text = str(columns[i])
-            pad_len = max(len(text),col_lens[i])
+            pad_len = max(len(text), col_lens[i])
             if orientation == self.LEFT:
                 line.append(text.ljust(pad_len, filler))
             elif orientation == self.RIGHT:
@@ -80,6 +84,6 @@ class CLI():
             else:
                 line.append(text.center(pad_len, filler))
         if border:
-            line.insert(0,'')
+            line.insert(0, '')
             line.append('')
         return sep.join(line)

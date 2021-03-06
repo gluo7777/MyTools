@@ -1,6 +1,7 @@
 from cli.scripts.config import Properties
 import requests
 
+
 class Client:
 
     TIMEOUT = 'timeout'
@@ -13,16 +14,18 @@ class Client:
         self.props.set_if_missing(self.TIMEOUT, str(self.DEFAULT_TIMEOUT))
         self._timeout = int(self.props.get(self.TIMEOUT))
 
-    def _path(self,*paths: str) -> str:
+    def _path(self, *paths: str) -> str:
         return self.base + "/" + "/".join(paths)
 
+
 class ClientException(Exception):
-    def __init__(self,msg:str='Error calling API',*args, **kwargs):
+    def __init__(self, msg: str = 'Error calling API', *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.msg = msg
 
     def __str__(self):
         return self.msg
+
 
 class Json(object):
     def __init__(self, response: requests.Response):

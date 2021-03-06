@@ -1,5 +1,6 @@
 from cli.scripts.config import Properties
 
+
 class GoogleProperties(Properties):
     SECTION = "Google"
     CLIENT_ID = "client_id"
