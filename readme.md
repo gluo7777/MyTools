@@ -11,47 +11,70 @@ A command line utility that accomplishes various things
 - Diagnostics `mytool info`
     1. print information about system such as OS
 
-## Upgrade Python
-
-### Windows 10
-
-https://stackoverflow.com/questions/45137395/how-do-i-upgrade-the-python-installation-in-windows-10
-
-```powershell
-iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-refreshenv
-choco upgrade python -y
-py -m pip install --upgrade pip
-alias pip="py -m pip"
-```
-
 ## Development
 
-1. Version > Python 3.8.1
-2. Create setup.py if missing
-3. Initialize virtualenv
-    > virtualenv venv
-    > ./venv/Scripts/activate
-4. Create script executables
-    > pip install --editable .
+### Upgrade python
 
-## Packaging
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.9
+sudo apt install python3.9-distutils
+python3.9 -m pip install --upgrade pip
+sudo apt-get install python3.9-venv
+python3.9 -m pip --version
+python3.9 -m venv -h
+```
 
-1. (If venv is activated) `deactivate`
-1. `python -m pip install --upgrade pip`
-1. `python -m pip install --user --upgrade setuptools wheel`
-1. (If generated python packages and wheel) `python setup.py sdist bdist_wheel`
-1. (If uploaded to pypi) Create account at `https://test.pypi.org/` and generate API master token
-1. Install twine for uploading to PYPI `python3 -m pip install --user --upgrade twine`
-1. Set up `$HOME/.pypirc`
-1. Upload with twine `python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*`
+### Set up venv
 
-## Built Distribution
+```bash
+python3.9 -m venv .venv
+source .venv/bin/activate
+## python automatically points to python3.9 now
+python --version
+which python
+```
 
-[Official Documentation](https://docs.python.org/3/distutils/builtdist.html)
+### Install dev dependencies
 
-1. (Local) `python setup.py install`
+```bash
+python -m pip install -r requirements.txt
+```
 
-1. Generate built distributions for tar,zip,msi extensions which should cover all 3 major platforms
-> python setup.py bdist --format=zip,gztar,wininst
+### Running as script
+
+```bash
+python -m cli.scripts.main
+# Do not run python cli/scripts/main.py as python's module resolution will not work
+```
+
+### Testing
+
+```bash
+python -m unittest
+```
+
+### Building sdist and wheel
+
+```bash
+python -m pip install --upgrade build
+python -m build
+```
+
+### Distribution
+
+### Installation
+
+```bash
+# Install wheel file directly
+python -m pip install path/to/file.whl
+```
+
+## Files
+
+- `requirements.txt`: required (concrete) dependencies for development or installation from source
+- `setup.cfg`: project metadata
+    - `install_requires`: required (abstract) dependencies for usage as a python module
+- `constraints.txt`: similar to requirements.txt but only specifies constraints (typically for transitive dependencies)
+- `pyproject.toml`: specifies dependencies that are used during the building of the source code but not required afterwards

@@ -6,3 +6,5 @@ dist/
 *.code-workspace
 build/
 youtube/**
+
+.venv/

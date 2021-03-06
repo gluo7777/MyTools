@@ -1,0 +1,11 @@
+--index-url https://pypi.org/simple
+--constraint constraints.txt
+build==0.3.0
+packaging==20.9
+pep517==0.9.1
+pyparsing==2.4.7
+toml==0.10.2
+click==7.1.2
+requests==2.25.1
+youtube-dl==2021.3.3
+colorama==0.4.4
