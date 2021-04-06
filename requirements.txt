@@ -16,7 +16,7 @@ pylint==2.7.2
 pyparsing==2.4.7
 requests==2.25.1
 toml==0.10.2
-urllib3==1.26.3
+urllib3==1.26.4
 wrapt==1.12.1
 youtube-dl==2021.3.3
 wheel==0.36.2
